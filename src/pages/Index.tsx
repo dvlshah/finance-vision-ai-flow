@@ -1,9 +1,6 @@
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { OverviewCards } from '@/components/dashboard/OverviewCards';
-import { SpendingChart } from '@/components/dashboard/SpendingChart';
-import { CategoryBreakdown } from '@/components/dashboard/CategoryBreakdown';
-import { TransactionList } from '@/components/transactions/TransactionList';
+import { DashboardTabs } from '@/components/navigation/DashboardTabs';
 
 const Index = () => {
   return (
@@ -14,14 +11,7 @@ const Index = () => {
           <p className="text-slate-600">Your complete financial picture at a glance</p>
         </div>
         
-        <OverviewCards />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <SpendingChart />
-          <CategoryBreakdown />
-        </div>
-        
-        <TransactionList />
+        <DashboardTabs />
       </div>
     </DashboardLayout>
   );
