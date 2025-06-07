@@ -1,52 +1,66 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, CreditCard } from 'lucide-react';
+import { ProgressRing } from '@/components/ui/progress-ring';
 
 const overviewData = [
   {
     title: 'Net Worth',
     value: '$124,532',
     change: '+12.5%',
-    trend: 'up',
+    trend: 'up' as const,
     icon: DollarSign,
-    color: 'text-green-600'
+    color: 'text-green-600',
+    progress: 75
   },
   {
     title: 'Monthly Income',
     value: '$8,500',
     change: '+3.2%',
-    trend: 'up',
+    trend: 'up' as const,
     icon: TrendingUp,
-    color: 'text-blue-600'
+    color: 'text-blue-600',
+    progress: 85
   },
   {
     title: 'Monthly Expenses',
     value: '$6,200',
     change: '-2.1%',
-    trend: 'down',
+    trend: 'down' as const,
     icon: CreditCard,
-    color: 'text-orange-600'
+    color: 'text-orange-600',
+    progress: 62
   },
   {
     title: 'Savings Rate',
     value: '27%',
     change: '+5.3%',
-    trend: 'up',
+    trend: 'up' as const,
     icon: TrendingUp,
-    color: 'text-purple-600'
+    color: 'text-purple-600',
+    progress: 27
   }
 ];
 
 export const OverviewCards = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {overviewData.map((item) => (
-        <Card key={item.title} className="hover:shadow-lg transition-shadow">
+        <Card key={item.title} className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-600">
               {item.title}
             </CardTitle>
-            <item.icon size={20} className={item.color} />
+            <div className="relative">
+              <ProgressRing 
+                progress={item.progress} 
+                size={40} 
+                strokeWidth={4}
+                className={item.color}
+              >
+                <item.icon size={16} className={item.color} />
+              </ProgressRing>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-slate-900 mb-1">

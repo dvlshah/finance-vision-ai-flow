@@ -12,12 +12,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="flex">
         <Sidebar />
         <div className="flex-1">
           <Header onUploadClick={() => setIsUploadModalOpen(true)} />
-          <main className="p-6">
+          <main className="p-4 md:p-6">
             {children}
           </main>
         </div>
