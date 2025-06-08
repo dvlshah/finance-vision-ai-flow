@@ -1,8 +1,9 @@
 
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { AddTransactionForm } from '@/components/forms/AddTransactionForm';
 import { BudgetForm } from '@/components/forms/BudgetForm';
 import { ReceiptScanner } from '@/components/forms/ReceiptScanner';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 interface QuickActionModalProps {
   isOpen: boolean;
@@ -15,6 +16,24 @@ export const QuickActionModal = ({ isOpen, onClose, actionType }: QuickActionMod
     console.log('Quick action submitted:', data);
     // Here you would typically send to your backend/state management
     onClose();
+  };
+
+  const getTitle = () => {
+    switch (actionType) {
+      case 'transaction': return 'Add Transaction';
+      case 'budget': return 'Set Budget';
+      case 'receipt': return 'Scan Receipt';
+      default: return 'Quick Action';
+    }
+  };
+
+  const getDescription = () => {
+    switch (actionType) {
+      case 'transaction': return 'Add a new transaction to your financial records';
+      case 'budget': return 'Set up a budget for expense tracking';
+      case 'receipt': return 'Scan a receipt to automatically extract transaction details';
+      default: return 'Perform a quick financial action';
+    }
   };
 
   const renderContent = () => {
@@ -33,6 +52,10 @@ export const QuickActionModal = ({ isOpen, onClose, actionType }: QuickActionMod
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="p-0 max-w-md">
+        <VisuallyHidden>
+          <DialogTitle>{getTitle()}</DialogTitle>
+          <DialogDescription>{getDescription()}</DialogDescription>
+        </VisuallyHidden>
         {renderContent()}
       </DialogContent>
     </Dialog>
