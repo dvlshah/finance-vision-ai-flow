@@ -5,15 +5,16 @@ import { Plus, Upload, Target, Receipt } from 'lucide-react';
 
 interface QuickActionsProps {
   onUploadClick: () => void;
+  onQuickAction: (action: 'transaction' | 'budget' | 'receipt') => void;
 }
 
-export const QuickActions = ({ onUploadClick }: QuickActionsProps) => {
+export const QuickActions = ({ onUploadClick, onQuickAction }: QuickActionsProps) => {
   const actions = [
     {
       icon: Plus,
       label: 'Add Transaction',
       description: 'Manual entry',
-      onClick: () => console.log('Add transaction'),
+      onClick: () => onQuickAction('transaction'),
       variant: 'default' as const
     },
     {
@@ -27,14 +28,14 @@ export const QuickActions = ({ onUploadClick }: QuickActionsProps) => {
       icon: Target,
       label: 'Set Budget',
       description: 'Create goals',
-      onClick: () => console.log('Set budget'),
+      onClick: () => onQuickAction('budget'),
       variant: 'outline' as const
     },
     {
       icon: Receipt,
       label: 'Scan Receipt',
       description: 'Photo capture',
-      onClick: () => console.log('Scan receipt'),
+      onClick: () => onQuickAction('receipt'),
       variant: 'outline' as const
     }
   ];

@@ -9,6 +9,7 @@ import { SpendingChart } from '@/components/dashboard/SpendingChart';
 import { CategoryBreakdown } from '@/components/dashboard/CategoryBreakdown';
 import { TransactionList } from '@/components/transactions/TransactionList';
 import { TimeRangeSelector } from '@/components/navigation/TimeRangeSelector';
+import { QuickActionModal } from '@/components/modals/QuickActionModal';
 import { BarChart3, PieChart, TrendingUp, CreditCard, Target, FileText } from 'lucide-react';
 
 interface DashboardTabsProps {
@@ -17,6 +18,27 @@ interface DashboardTabsProps {
 
 export const DashboardTabs = ({ onUploadClick }: DashboardTabsProps) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [quickActionModal, setQuickActionModal] = useState<{
+    isOpen: boolean;
+    actionType: 'transaction' | 'budget' | 'receipt' | null;
+  }>({
+    isOpen: false,
+    actionType: null
+  });
+
+  const handleQuickAction = (action: 'transaction' | 'budget' | 'receipt') => {
+    setQuickActionModal({
+      isOpen: true,
+      actionType: action
+    });
+  };
+
+  const closeQuickActionModal = () => {
+    setQuickActionModal({
+      isOpen: false,
+      actionType: null
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -64,7 +86,7 @@ export const DashboardTabs = ({ onUploadClick }: DashboardTabsProps) => {
           </div>
 
           {/* Quick Actions */}
-          <QuickActions onUploadClick={onUploadClick} />
+          <QuickActions onUploadClick={onUploadClick} onQuickAction={handleQuickAction} />
 
           {/* Overview Cards */}
           <OverviewCards />
@@ -113,6 +135,12 @@ export const DashboardTabs = ({ onUploadClick }: DashboardTabsProps) => {
           </div>
         </TabsContent>
       </Tabs>
+
+      <QuickActionModal
+        isOpen={quickActionModal.isOpen}
+        onClose={closeQuickActionModal}
+        actionType={quickActionModal.actionType}
+      />
     </div>
   );
 };
