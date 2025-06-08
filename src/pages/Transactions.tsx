@@ -1,8 +1,9 @@
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { TransactionList } from '@/components/transactions/TransactionList';
+import { GlobalSearch } from '@/components/search/GlobalSearch';
 import { Button } from '@/components/ui/button';
-import { Plus, Download, Filter } from 'lucide-react';
+import { Plus, Download } from 'lucide-react';
 
 const Transactions = () => {
   return (
@@ -15,10 +16,6 @@ const Transactions = () => {
           </div>
           <div className="flex items-center gap-3">
             <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-            <Button variant="outline">
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
@@ -29,6 +26,7 @@ const Transactions = () => {
           </div>
         </div>
 
+        <GlobalSearch />
         <TransactionList />
       </div>
     </DashboardLayout>
