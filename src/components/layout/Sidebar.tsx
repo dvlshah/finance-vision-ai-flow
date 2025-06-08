@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Upload, 
@@ -23,6 +24,7 @@ const menuItems = [
 
 export const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const location = useLocation();
 
   return (
     <div className={cn(
@@ -44,19 +46,41 @@ export const Sidebar = () => {
       </div>
       
       <nav className="p-4 space-y-2">
-        {menuItems.map((item) => (
-          <div
-            key={item.path}
-            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors group"
-          >
-            <item.icon size={20} className="text-slate-600 group-hover:text-blue-600" />
-            {!isCollapsed && (
-              <span className="text-sm font-medium text-slate-700 group-hover:text-blue-600">
-                {item.label}
-              </span>
-            )}
-          </div>
-        ))}
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={cn(
+                "flex items-center space-x-3 p-3 rounded-lg transition-colors group",
+                isActive 
+                  ? "bg-blue-50 text-blue-600 border border-blue-200" 
+                  : "hover:bg-blue-50 hover:text-blue-600"
+              )}
+            >
+              <item.icon 
+                size={20} 
+                className={cn(
+                  "transition-colors",
+                  isActive 
+                    ? "text-blue-600" 
+                    : "text-slate-600 group-hover:text-blue-600"
+                )} 
+              />
+              {!isCollapsed && (
+                <span className={cn(
+                  "text-sm font-medium transition-colors",
+                  isActive 
+                    ? "text-blue-600" 
+                    : "text-slate-700 group-hover:text-blue-600"
+                )}>
+                  {item.label}
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </nav>
     </div>
   );
