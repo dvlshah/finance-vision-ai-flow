@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -136,7 +135,7 @@ export const ReceiptScanner = ({ onSubmit, onCancel }: ReceiptScannerProps) => {
                 <div key={index} className="flex items-center justify-between py-1">
                   <div className="flex items-center gap-2">
                     <span>{item.name}</span>
-                    <ConfidenceBadge confidence={item.confidence} size="sm" />
+                    <ConfidenceBadge confidence={item.confidence} />
                   </div>
                   <span className="font-mono">${item.price}</span>
                 </div>
