@@ -1,6 +1,6 @@
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { Upload, FileText, Camera, Folder } from 'lucide-react';
+import { Upload as UploadIcon, FileText, Camera, Folder } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -22,7 +22,7 @@ const Upload = () => {
             </CardHeader>
             <CardContent>
               <Button className="w-full">
-                <Upload className="h-4 w-4 mr-2" />
+                <UploadIcon className="h-4 w-4 mr-2" />
                 Upload Statements
               </Button>
             </CardContent>
@@ -50,7 +50,7 @@ const Upload = () => {
             </CardHeader>
             <CardContent>
               <Button className="w-full">
-                <Upload className="h-4 w-4 mr-2" />
+                <UploadIcon className="h-4 w-4 mr-2" />
                 Upload Tax Docs
               </Button>
             </CardContent>
