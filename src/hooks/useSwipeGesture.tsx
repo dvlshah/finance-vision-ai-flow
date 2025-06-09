@@ -12,7 +12,7 @@ interface UseSwipeGestureProps extends SwipeHandlers {
   threshold?: number;
 }
 
-export const useSwipeGesture = ({ 
+export const useSwipeGesture = <T extends HTMLElement = HTMLDivElement>({ 
   onSwipeLeft, 
   onSwipeRight, 
   onSwipeUp, 
@@ -21,7 +21,7 @@ export const useSwipeGesture = ({
 }: UseSwipeGestureProps) => {
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
-  const elementRef = useRef<HTMLElement>(null);
+  const elementRef = useRef<T>(null);
 
   useEffect(() => {
     const element = elementRef.current;
