@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,8 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ConfidenceBadge } from '@/components/ui/confidence-badge';
-import { Search, Filter, Edit2, Check, X, MoreHorizontal, Copy, Split, Trash2 } from 'lucide-react';
+import { Search, Filter, Edit2, Check, X, MoreHorizontal, Copy, Split, Trash2, RefreshCw } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
+import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 
 interface Transaction {
   id: string;
@@ -87,6 +88,17 @@ export const TransactionList = () => {
   const [selectedTransactions, setSelectedTransactions] = useState<string[]>([]);
   const [bulkEditMode, setBulkEditMode] = useState(false);
 
+  const handleRefresh = async () => {
+    // Simulate refresh delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('Refreshing transactions...');
+  };
+
+  const { isRefreshing, pullDistance } = usePullToRefresh({ 
+    onRefresh: handleRefresh,
+    threshold: 80 
+  });
+
   const handleEditTransaction = (id: string) => {
     setTransactions(prev => 
       prev.map(t => t.id === id ? { ...t, isEditing: true } : t)
@@ -149,120 +161,138 @@ export const TransactionList = () => {
   const needsReviewCount = transactions.filter(t => t.confidence < 90).length;
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
-            {needsReviewCount > 0 && (
-              <p className="text-sm text-amber-600 mt-1">
-                {needsReviewCount} transactions need review
-              </p>
-            )}
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            {selectedTransactions.length > 0 && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setBulkEditMode(!bulkEditMode)}
-              >
-                Edit {selectedTransactions.length} selected
-              </Button>
-            )}
-          </div>
+    <div className="relative">
+      {/* Pull to refresh indicator */}
+      {pullDistance > 0 && (
+        <div 
+          className="absolute top-0 left-0 right-0 flex justify-center items-center bg-blue-50 text-blue-600 transition-all duration-200"
+          style={{ height: `${Math.min(pullDistance, 80)}px` }}
+        >
+          <RefreshCw 
+            className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} 
+          />
+          <span className="ml-2 text-sm">
+            {isRefreshing ? 'Refreshing...' : 'Pull to refresh'}
+          </span>
         </div>
-        
-        <div className="flex space-x-4">
-          <div className="relative flex-1">
-            <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
-            <Input
-              placeholder="Search transactions or merchants..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-48">
-              <Filter size={16} className="mr-2" />
-              <SelectValue placeholder="Filter by category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="Food">Food</SelectItem>
-              <SelectItem value="Income">Income</SelectItem>
-              <SelectItem value="Entertainment">Entertainment</SelectItem>
-              <SelectItem value="Transportation">Transportation</SelectItem>
-              <SelectItem value="Shopping">Shopping</SelectItem>
-              <SelectItem value="Housing">Housing</SelectItem>
-              <SelectItem value="Utilities">Utilities</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      )}
 
-        {/* Bulk Edit Controls */}
-        {bulkEditMode && selectedTransactions.length > 0 && (
-          <div className="bg-blue-50 rounded-lg p-4 space-y-3">
-            <h4 className="font-medium text-blue-900">
-              Bulk Edit {selectedTransactions.length} transactions
-            </h4>
-            <div className="flex items-center space-x-3">
-              <span className="text-sm text-blue-700">Change category to:</span>
-              <Select onValueChange={handleBulkCategoryChange}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Food">Food</SelectItem>
-                  <SelectItem value="Entertainment">Entertainment</SelectItem>
-                  <SelectItem value="Transportation">Transportation</SelectItem>
-                  <SelectItem value="Shopping">Shopping</SelectItem>
-                  <SelectItem value="Housing">Housing</SelectItem>
-                  <SelectItem value="Utilities">Utilities</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setBulkEditMode(false)}
-              >
-                Cancel
-              </Button>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
+              {needsReviewCount > 0 && (
+                <p className="text-sm text-amber-600 mt-1">
+                  {needsReviewCount} transactions need review
+                </p>
+              )}
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              {selectedTransactions.length > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setBulkEditMode(!bulkEditMode)}
+                >
+                  Edit {selectedTransactions.length} selected
+                </Button>
+              )}
             </div>
           </div>
-        )}
-      </CardHeader>
-      
-      <CardContent>
-        <div className="space-y-2">
-          {/* Select All Header */}
-          <div className="flex items-center space-x-3 py-2 border-b border-slate-100">
-            <Checkbox
-              checked={selectedTransactions.length === filteredTransactions.length && filteredTransactions.length > 0}
-              onCheckedChange={handleSelectAll}
-            />
-            <span className="text-sm font-medium text-slate-600">
-              Select All ({filteredTransactions.length})
-            </span>
+          
+          {/* Mobile-optimized search and filter */}
+          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
+            <div className="relative flex-1">
+              <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+              <Input
+                placeholder="Search transactions or merchants..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-12 md:h-10"
+              />
+            </div>
+            
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-full md:w-48 h-12 md:h-10">
+                <Filter size={16} className="mr-2" />
+                <SelectValue placeholder="Filter by category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="Food">Food</SelectItem>
+                <SelectItem value="Income">Income</SelectItem>
+                <SelectItem value="Entertainment">Entertainment</SelectItem>
+                <SelectItem value="Transportation">Transportation</SelectItem>
+                <SelectItem value="Shopping">Shopping</SelectItem>
+                <SelectItem value="Housing">Housing</SelectItem>
+                <SelectItem value="Utilities">Utilities</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {filteredTransactions.map((transaction) => (
-            <TransactionRow
-              key={transaction.id}
-              transaction={transaction}
-              isSelected={selectedTransactions.includes(transaction.id)}
-              onSelect={handleSelectTransaction}
-              onEdit={handleEditTransaction}
-              onSave={handleSaveTransaction}
-              onCancel={handleCancelEdit}
-            />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+          {/* Bulk Edit Controls */}
+          {bulkEditMode && selectedTransactions.length > 0 && (
+            <div className="bg-blue-50 rounded-lg p-4 space-y-3">
+              <h4 className="font-medium text-blue-900">
+                Bulk Edit {selectedTransactions.length} transactions
+              </h4>
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-blue-700">Change category to:</span>
+                <Select onValueChange={handleBulkCategoryChange}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Food">Food</SelectItem>
+                    <SelectItem value="Entertainment">Entertainment</SelectItem>
+                    <SelectItem value="Transportation">Transportation</SelectItem>
+                    <SelectItem value="Shopping">Shopping</SelectItem>
+                    <SelectItem value="Housing">Housing</SelectItem>
+                    <SelectItem value="Utilities">Utilities</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setBulkEditMode(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardHeader>
+        
+        <CardContent>
+          <div className="space-y-2">
+            {/* Select All Header */}
+            <div className="flex items-center space-x-3 py-2 border-b border-slate-100">
+              <Checkbox
+                checked={selectedTransactions.length === filteredTransactions.length && filteredTransactions.length > 0}
+                onCheckedChange={handleSelectAll}
+              />
+              <span className="text-sm font-medium text-slate-600">
+                Select All ({filteredTransactions.length})
+              </span>
+            </div>
+
+            {filteredTransactions.map((transaction) => (
+              <TransactionRow
+                key={transaction.id}
+                transaction={transaction}
+                isSelected={selectedTransactions.includes(transaction.id)}
+                onSelect={handleSelectTransaction}
+                onEdit={handleEditTransaction}
+                onSave={handleSaveTransaction}
+                onCancel={handleCancelEdit}
+              />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
@@ -278,25 +308,35 @@ interface TransactionRowProps {
 const TransactionRow = ({ transaction, isSelected, onSelect, onEdit, onSave, onCancel }: TransactionRowProps) => {
   const [editCategory, setEditCategory] = useState(transaction.category);
 
+  const swipeRef = useSwipeGesture({
+    onSwipeRight: () => onEdit(transaction.id),
+    onSwipeLeft: () => console.log('Swipe left - could delete'),
+    threshold: 100
+  });
+
   return (
-    <div className="flex items-center space-x-3 p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+    <div 
+      ref={swipeRef}
+      className="flex items-center space-x-3 p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors touch-manipulation"
+    >
       <Checkbox
         checked={isSelected}
         onCheckedChange={(checked) => onSelect(transaction.id, checked as boolean)}
+        className="min-w-[20px]"
       />
       
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <h4 className="font-medium text-slate-900">{transaction.description}</h4>
+          <div className="space-y-1 flex-1 min-w-0">
+            <h4 className="font-medium text-slate-900 truncate pr-2">{transaction.description}</h4>
             <div className="flex items-center space-x-2 text-sm text-slate-500">
               <span>{transaction.date}</span>
               <span>•</span>
-              <span>{transaction.account}</span>
+              <span className="truncate">{transaction.account}</span>
             </div>
           </div>
           
-          <div className="text-right">
+          <div className="text-right flex-shrink-0">
             <p className={`font-semibold ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
               {transaction.amount > 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
             </p>
@@ -304,11 +344,11 @@ const TransactionRow = ({ transaction, isSelected, onSelect, onEdit, onSave, onC
         </div>
       </div>
       
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 flex-shrink-0">
         {transaction.isEditing ? (
-          <>
+          <div className="flex items-center space-x-2">
             <Select value={editCategory} onValueChange={setEditCategory}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-32 md:w-40 h-8">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -326,7 +366,7 @@ const TransactionRow = ({ transaction, isSelected, onSelect, onEdit, onSave, onC
               size="sm"
               variant="ghost"
               onClick={() => onSave(transaction.id, editCategory)}
-              className="text-green-600 hover:text-green-700"
+              className="text-green-600 hover:text-green-700 p-2"
             >
               <Check size={16} />
             </Button>
@@ -335,11 +375,11 @@ const TransactionRow = ({ transaction, isSelected, onSelect, onEdit, onSave, onC
               size="sm"
               variant="ghost"
               onClick={() => onCancel(transaction.id)}
-              className="text-red-600 hover:text-red-700"
+              className="text-red-600 hover:text-red-700 p-2"
             >
               <X size={16} />
             </Button>
-          </>
+          </div>
         ) : (
           <>
             <ConfidenceBadge
@@ -350,7 +390,7 @@ const TransactionRow = ({ transaction, isSelected, onSelect, onEdit, onSave, onC
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size="sm" variant="ghost" className="text-slate-600 hover:text-slate-700">
+                <Button size="sm" variant="ghost" className="text-slate-600 hover:text-slate-700 p-2">
                   <MoreHorizontal size={16} />
                 </Button>
               </DropdownMenuTrigger>
