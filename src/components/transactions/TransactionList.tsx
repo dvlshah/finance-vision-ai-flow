@@ -5,10 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ConfidenceBadge } from '@/components/ui/confidence-badge';
-import { Search, Filter, Edit2, Check, X, MoreHorizontal, Copy, Split, Trash2, RefreshCw } from 'lucide-react';
+import { Search, Filter, Edit2, Check, X, MoreHorizontal, Copy, Split, Trash2, RefreshCw, Settings } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
+import { EditTransactionModal } from '@/components/modals/EditTransactionModal';
+import { SplitTransactionModal } from '@/components/modals/SplitTransactionModal';
+import { BulkOperationsModal } from '@/components/modals/BulkOperationsModal';
+import { ImportExportUtils } from '@/components/utilities/ImportExportUtils';
 
 interface Transaction {
   id: string;
@@ -87,6 +91,10 @@ export const TransactionList = () => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [selectedTransactions, setSelectedTransactions] = useState<string[]>([]);
   const [bulkEditMode, setBulkEditMode] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [splittingTransaction, setSplittingTransaction] = useState<Transaction | null>(null);
+  const [showBulkOperations, setShowBulkOperations] = useState(false);
+  const [showImportExport, setShowImportExport] = useState(false);
 
   const handleRefresh = async () => {
     // Simulate refresh delay
@@ -105,16 +113,11 @@ export const TransactionList = () => {
     );
   };
 
-  const handleSaveTransaction = (id: string, newCategory: string) => {
+  const handleSaveTransaction = (id: string, updates: Partial<Transaction>) => {
     setTransactions(prev => 
-      prev.map(t => t.id === id ? { 
-        ...t, 
-        category: newCategory, 
-        isEditing: false, 
-        confidence: 100,
-        reason: 'Manually corrected by user'
-      } : t)
+      prev.map(t => t.id === id ? { ...t, ...updates } : t)
     );
+    setEditingTransaction(null);
   };
 
   const handleCancelEdit = (id: string) => {
@@ -151,6 +154,44 @@ export const TransactionList = () => {
     setBulkEditMode(false);
   };
 
+  const handleSplitTransaction = (id: string, splits: any[]) => {
+    setTransactions(prev => {
+      const originalTransaction = prev.find(t => t.id === id);
+      if (!originalTransaction) return prev;
+
+      const newTransactions = splits.map((split, index) => ({
+        id: `${id}-split-${index}`,
+        date: originalTransaction.date,
+        description: split.description,
+        amount: originalTransaction.amount < 0 ? -split.amount : split.amount,
+        category: split.category,
+        confidence: 100,
+        reason: `Split from: ${originalTransaction.description}`,
+        account: originalTransaction.account,
+        merchant: originalTransaction.merchant
+      }));
+
+      return prev.filter(t => t.id !== id).concat(newTransactions);
+    });
+    setSplittingTransaction(null);
+  };
+
+  const handleBulkDelete = () => {
+    setTransactions(prev => prev.filter(t => !selectedTransactions.includes(t.id)));
+    setSelectedTransactions([]);
+  };
+
+  const handleBulkArchive = () => {
+    // In a real app, you'd mark as archived rather than delete
+    console.log('Archiving transactions:', selectedTransactions);
+    setSelectedTransactions([]);
+  };
+
+  const handleImportTransactions = (importedTransactions: Transaction[]) => {
+    setTransactions(prev => [...prev, ...importedTransactions]);
+    setShowImportExport(false);
+  };
+
   const filteredTransactions = transactions.filter(transaction => {
     const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          transaction.merchant?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -159,6 +200,10 @@ export const TransactionList = () => {
   });
 
   const needsReviewCount = transactions.filter(t => t.confidence < 90).length;
+
+  const handleEditTransactionModal = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+  };
 
   return (
     <div className="relative">
@@ -194,11 +239,19 @@ export const TransactionList = () => {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => setBulkEditMode(!bulkEditMode)}
+                  onClick={() => setShowBulkOperations(true)}
                 >
-                  Edit {selectedTransactions.length} selected
+                  Bulk Actions ({selectedTransactions.length})
                 </Button>
               )}
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowImportExport(!showImportExport)}
+              >
+                <Settings size={16} className="mr-1" />
+                Tools
+              </Button>
             </div>
           </div>
           
@@ -266,6 +319,15 @@ export const TransactionList = () => {
         </CardHeader>
         
         <CardContent>
+          {showImportExport && (
+            <div className="mb-4">
+              <ImportExportUtils 
+                transactions={transactions}
+                onImport={handleImportTransactions}
+              />
+            </div>
+          )}
+
           <div className="space-y-2">
             {/* Select All Header */}
             <div className="flex items-center space-x-3 py-2 border-b border-slate-100">
@@ -285,6 +347,8 @@ export const TransactionList = () => {
                 isSelected={selectedTransactions.includes(transaction.id)}
                 onSelect={handleSelectTransaction}
                 onEdit={handleEditTransaction}
+                onEditModal={handleEditTransactionModal}
+                onSplit={setSplittingTransaction}
                 onSave={handleSaveTransaction}
                 onCancel={handleCancelEdit}
               />
@@ -292,6 +356,30 @@ export const TransactionList = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modals */}
+      <EditTransactionModal
+        isOpen={!!editingTransaction}
+        onClose={() => setEditingTransaction(null)}
+        transaction={editingTransaction}
+        onSave={handleSaveTransaction}
+      />
+
+      <SplitTransactionModal
+        isOpen={!!splittingTransaction}
+        onClose={() => setSplittingTransaction(null)}
+        transaction={splittingTransaction}
+        onSplit={handleSplitTransaction}
+      />
+
+      <BulkOperationsModal
+        isOpen={showBulkOperations}
+        onClose={() => setShowBulkOperations(false)}
+        selectedCount={selectedTransactions.length}
+        onBulkEdit={handleBulkCategoryChange}
+        onBulkDelete={handleBulkDelete}
+        onBulkArchive={handleBulkArchive}
+      />
     </div>
   );
 };
@@ -301,15 +389,26 @@ interface TransactionRowProps {
   isSelected: boolean;
   onSelect: (id: string, checked: boolean) => void;
   onEdit: (id: string) => void;
+  onEditModal: (transaction: Transaction) => void;
+  onSplit: (transaction: Transaction) => void;
   onSave: (id: string, category: string) => void;
   onCancel: (id: string) => void;
 }
 
-const TransactionRow = ({ transaction, isSelected, onSelect, onEdit, onSave, onCancel }: TransactionRowProps) => {
+const TransactionRow = ({ 
+  transaction, 
+  isSelected, 
+  onSelect, 
+  onEdit, 
+  onEditModal, 
+  onSplit, 
+  onSave, 
+  onCancel 
+}: TransactionRowProps) => {
   const [editCategory, setEditCategory] = useState(transaction.category);
 
-  const swipeRef = useSwipeGesture({
-    onSwipeRight: () => onEdit(transaction.id),
+  const swipeRef = useSwipeGesture<HTMLDivElement>({
+    onSwipeRight: () => onEditModal(transaction),
     onSwipeLeft: () => console.log('Swipe left - could delete'),
     threshold: 100
   });
@@ -395,11 +494,11 @@ const TransactionRow = ({ transaction, isSelected, onSelect, onEdit, onSave, onC
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => onEdit(transaction.id)}>
+                <DropdownMenuItem onClick={() => onEditModal(transaction)}>
                   <Edit2 size={14} className="mr-2" />
-                  Edit Category
+                  Edit Transaction
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onSplit(transaction)}>
                   <Split size={14} className="mr-2" />
                   Split Transaction
                 </DropdownMenuItem>
