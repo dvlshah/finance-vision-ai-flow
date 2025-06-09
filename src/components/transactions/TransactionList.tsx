@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -115,7 +116,7 @@ export const TransactionList = () => {
 
   const handleSaveTransaction = (id: string, updates: Partial<Transaction>) => {
     setTransactions(prev => 
-      prev.map(t => t.id === id ? { ...t, ...updates } : t)
+      prev.map(t => t.id === id ? { ...t, ...updates, isEditing: false } : t)
     );
     setEditingTransaction(null);
   };
@@ -391,7 +392,7 @@ interface TransactionRowProps {
   onEdit: (id: string) => void;
   onEditModal: (transaction: Transaction) => void;
   onSplit: (transaction: Transaction) => void;
-  onSave: (id: string, category: string) => void;
+  onSave: (id: string, updates: Partial<Transaction>) => void;
   onCancel: (id: string) => void;
 }
 
@@ -412,6 +413,14 @@ const TransactionRow = ({
     onSwipeLeft: () => console.log('Swipe left - could delete'),
     threshold: 100
   });
+
+  const handleSaveEdit = () => {
+    onSave(transaction.id, { 
+      category: editCategory, 
+      confidence: 100, 
+      reason: 'Manually edited by user' 
+    });
+  };
 
   return (
     <div 
@@ -464,7 +473,7 @@ const TransactionRow = ({
             <Button
               size="sm"
               variant="ghost"
-              onClick={() => onSave(transaction.id, editCategory)}
+              onClick={handleSaveEdit}
               className="text-green-600 hover:text-green-700 p-2"
             >
               <Check size={16} />
