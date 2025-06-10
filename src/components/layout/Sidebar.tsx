@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-  { icon: Upload, label: 'Upload Documents', path: '/upload' },
+  { icon: Upload, label: 'Upload', path: '/upload' },
   { icon: CreditCard, label: 'Transactions', path: '/transactions' },
   { icon: PieChart, label: 'Categories', path: '/categories' },
   { icon: TrendingUp, label: 'Analytics', path: '/analytics' },
