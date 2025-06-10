@@ -82,6 +82,18 @@ export const ReportsGenerator = () => {
     return reportTemplates.find(t => t.id === selectedTemplate);
   };
 
+  const handleChartsChange = (checked: boolean | "indeterminate") => {
+    setIncludeCharts(checked === true);
+  };
+
+  const handleInsightsChange = (checked: boolean | "indeterminate") => {
+    setIncludeInsights(checked === true);
+  };
+
+  const handleEmailChange = (checked: boolean | "indeterminate") => {
+    setEmailReport(checked === true);
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -161,7 +173,7 @@ export const ReportsGenerator = () => {
                 <Checkbox 
                   id="include-charts" 
                   checked={includeCharts}
-                  onCheckedChange={setIncludeCharts}
+                  onCheckedChange={handleChartsChange}
                 />
                 <Label htmlFor="include-charts" className="text-sm">Include charts and visualizations</Label>
               </div>
@@ -169,7 +181,7 @@ export const ReportsGenerator = () => {
                 <Checkbox 
                   id="include-insights" 
                   checked={includeInsights}
-                  onCheckedChange={setIncludeInsights}
+                  onCheckedChange={handleInsightsChange}
                 />
                 <Label htmlFor="include-insights" className="text-sm">Include financial insights and recommendations</Label>
               </div>
@@ -177,7 +189,7 @@ export const ReportsGenerator = () => {
                 <Checkbox 
                   id="email-report" 
                   checked={emailReport}
-                  onCheckedChange={setEmailReport}
+                  onCheckedChange={handleEmailChange}
                 />
                 <Label htmlFor="email-report" className="text-sm">Email report to my address</Label>
               </div>
