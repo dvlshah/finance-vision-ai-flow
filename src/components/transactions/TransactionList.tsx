@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ConfidenceBadge } from '@/components/ui/confidence-badge';
-import { Search, Filter, Edit2, Check, X, MoreHorizontal, Copy, Split, Trash2, RefreshCw, Settings } from 'lucide-react';
+import { ReviewQueue } from '@/components/transactions/ReviewQueue';
+import { Search, Filter, MoreHorizontal, Copy, Split, Trash2, RefreshCw, Settings } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
@@ -23,7 +24,6 @@ interface Transaction {
   category: string;
   confidence: number;
   reason?: string;
-  isEditing?: boolean;
   account?: string;
   merchant?: string;
 }
@@ -91,14 +91,12 @@ export const TransactionList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [selectedTransactions, setSelectedTransactions] = useState<string[]>([]);
-  const [bulkEditMode, setBulkEditMode] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [splittingTransaction, setSplittingTransaction] = useState<Transaction | null>(null);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
   const [showImportExport, setShowImportExport] = useState(false);
 
   const handleRefresh = async () => {
-    // Simulate refresh delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     console.log('Refreshing transactions...');
   };
@@ -108,22 +106,9 @@ export const TransactionList = () => {
     threshold: 80 
   });
 
-  const handleEditTransaction = (id: string) => {
+  const handleUpdateTransaction = (id: string, updates: Partial<Transaction>) => {
     setTransactions(prev => 
-      prev.map(t => t.id === id ? { ...t, isEditing: true } : t)
-    );
-  };
-
-  const handleSaveTransaction = (id: string, updates: Partial<Transaction>) => {
-    setTransactions(prev => 
-      prev.map(t => t.id === id ? { ...t, ...updates, isEditing: false } : t)
-    );
-    setEditingTransaction(null);
-  };
-
-  const handleCancelEdit = (id: string) => {
-    setTransactions(prev => 
-      prev.map(t => t.id === id ? { ...t, isEditing: false } : t)
+      prev.map(t => t.id === id ? { ...t, ...updates } : t)
     );
   };
 
@@ -152,7 +137,6 @@ export const TransactionList = () => {
       )
     );
     setSelectedTransactions([]);
-    setBulkEditMode(false);
   };
 
   const handleSplitTransaction = (id: string, splits: any[]) => {
@@ -183,7 +167,6 @@ export const TransactionList = () => {
   };
 
   const handleBulkArchive = () => {
-    // In a real app, you'd mark as archived rather than delete
     console.log('Archiving transactions:', selectedTransactions);
     setSelectedTransactions([]);
   };
@@ -207,7 +190,7 @@ export const TransactionList = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative space-y-6">
       {/* Pull to refresh indicator */}
       {pullDistance > 0 && (
         <div 
@@ -222,6 +205,12 @@ export const TransactionList = () => {
           </span>
         </div>
       )}
+
+      {/* Review Queue */}
+      <ReviewQueue 
+        transactions={transactions}
+        onUpdateTransaction={handleUpdateTransaction}
+      />
 
       <Card>
         <CardHeader>
@@ -285,38 +274,6 @@ export const TransactionList = () => {
               </SelectContent>
             </Select>
           </div>
-
-          {/* Bulk Edit Controls */}
-          {bulkEditMode && selectedTransactions.length > 0 && (
-            <div className="bg-blue-50 rounded-lg p-4 space-y-3">
-              <h4 className="font-medium text-blue-900">
-                Bulk Edit {selectedTransactions.length} transactions
-              </h4>
-              <div className="flex items-center space-x-3">
-                <span className="text-sm text-blue-700">Change category to:</span>
-                <Select onValueChange={handleBulkCategoryChange}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Food">Food</SelectItem>
-                    <SelectItem value="Entertainment">Entertainment</SelectItem>
-                    <SelectItem value="Transportation">Transportation</SelectItem>
-                    <SelectItem value="Shopping">Shopping</SelectItem>
-                    <SelectItem value="Housing">Housing</SelectItem>
-                    <SelectItem value="Utilities">Utilities</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setBulkEditMode(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          )}
         </CardHeader>
         
         <CardContent>
@@ -347,11 +304,9 @@ export const TransactionList = () => {
                 transaction={transaction}
                 isSelected={selectedTransactions.includes(transaction.id)}
                 onSelect={handleSelectTransaction}
-                onEdit={handleEditTransaction}
                 onEditModal={handleEditTransactionModal}
                 onSplit={setSplittingTransaction}
-                onSave={handleSaveTransaction}
-                onCancel={handleCancelEdit}
+                onUpdateTransaction={handleUpdateTransaction}
               />
             ))}
           </div>
@@ -363,7 +318,7 @@ export const TransactionList = () => {
         isOpen={!!editingTransaction}
         onClose={() => setEditingTransaction(null)}
         transaction={editingTransaction}
-        onSave={handleSaveTransaction}
+        onSave={handleUpdateTransaction}
       />
 
       <SplitTransactionModal
@@ -389,38 +344,24 @@ interface TransactionRowProps {
   transaction: Transaction;
   isSelected: boolean;
   onSelect: (id: string, checked: boolean) => void;
-  onEdit: (id: string) => void;
   onEditModal: (transaction: Transaction) => void;
   onSplit: (transaction: Transaction) => void;
-  onSave: (id: string, updates: Partial<Transaction>) => void;
-  onCancel: (id: string) => void;
+  onUpdateTransaction: (id: string, updates: Partial<Transaction>) => void;
 }
 
 const TransactionRow = ({ 
   transaction, 
   isSelected, 
   onSelect, 
-  onEdit, 
   onEditModal, 
   onSplit, 
-  onSave, 
-  onCancel 
+  onUpdateTransaction 
 }: TransactionRowProps) => {
-  const [editCategory, setEditCategory] = useState(transaction.category);
-
   const swipeRef = useSwipeGesture<HTMLDivElement>({
     onSwipeRight: () => onEditModal(transaction),
     onSwipeLeft: () => console.log('Swipe left - could delete'),
     threshold: 100
   });
-
-  const handleSaveEdit = () => {
-    onSave(transaction.id, { 
-      category: editCategory, 
-      confidence: 100, 
-      reason: 'Manually edited by user' 
-    });
-  };
 
   return (
     <div 
@@ -453,76 +394,42 @@ const TransactionRow = ({
       </div>
       
       <div className="flex items-center space-x-2 flex-shrink-0">
-        {transaction.isEditing ? (
-          <div className="flex items-center space-x-2">
-            <Select value={editCategory} onValueChange={setEditCategory}>
-              <SelectTrigger className="w-32 md:w-40 h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Food">Food</SelectItem>
-                <SelectItem value="Income">Income</SelectItem>
-                <SelectItem value="Entertainment">Entertainment</SelectItem>
-                <SelectItem value="Transportation">Transportation</SelectItem>
-                <SelectItem value="Shopping">Shopping</SelectItem>
-                <SelectItem value="Housing">Housing</SelectItem>
-                <SelectItem value="Utilities">Utilities</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={handleSaveEdit}
-              className="text-green-600 hover:text-green-700 p-2"
-            >
-              <Check size={16} />
+        <ConfidenceBadge
+          confidence={transaction.confidence}
+          category={transaction.category}
+          reason={transaction.reason}
+          onCategoryUpdate={(category) => onUpdateTransaction(transaction.id, {
+            category,
+            confidence: 100,
+            reason: 'Corrected by user'
+          })}
+        />
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="ghost" className="text-slate-600 hover:text-slate-700 p-2">
+              <MoreHorizontal size={16} />
             </Button>
-            
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => onCancel(transaction.id)}
-              className="text-red-600 hover:text-red-700 p-2"
-            >
-              <X size={16} />
-            </Button>
-          </div>
-        ) : (
-          <>
-            <ConfidenceBadge
-              confidence={transaction.confidence}
-              category={transaction.category}
-              reason={transaction.reason}
-            />
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="sm" variant="ghost" className="text-slate-600 hover:text-slate-700 p-2">
-                  <MoreHorizontal size={16} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => onEditModal(transaction)}>
-                  <Edit2 size={14} className="mr-2" />
-                  Edit Transaction
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onSplit(transaction)}>
-                  <Split size={14} className="mr-2" />
-                  Split Transaction
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Copy size={14} className="mr-2" />
-                  Duplicate
-                </DropdownMenuItem>
-                <DropdownMenuItem className="text-red-600">
-                  <Trash2 size={14} className="mr-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
-        )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => onEditModal(transaction)}>
+              <MoreHorizontal size={14} className="mr-2" />
+              Edit Transaction
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onSplit(transaction)}>
+              <Split size={14} className="mr-2" />
+              Split Transaction
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Copy size={14} className="mr-2" />
+              Duplicate
+            </DropdownMenuItem>
+            <DropdownMenuItem className="text-red-600">
+              <Trash2 size={14} className="mr-2" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
