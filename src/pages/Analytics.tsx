@@ -1,5 +1,6 @@
-
+import { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { AnalyticsEmpty } from '@/components/empty-states/AnalyticsEmpty';
 import { SpendingTrends } from '@/components/analytics/SpendingTrends';
 import { BudgetTracking } from '@/components/analytics/BudgetTracking';
 import { FinancialInsights } from '@/components/analytics/FinancialInsights';
@@ -8,6 +9,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart3, Target, Lightbulb, FileText } from 'lucide-react';
 
 const Analytics = () => {
+  const [hasTransactions] = useState(false); // This would come from actual data
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+  if (!hasTransactions) {
+    return (
+      <DashboardLayout>
+        <AnalyticsEmpty onUploadClick={() => setIsUploadModalOpen(true)} />
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
