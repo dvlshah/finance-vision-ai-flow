@@ -7,21 +7,41 @@ import { CashFlowTrend } from '@/components/dashboard/CashFlowTrend';
 import { CategoryBreakdown } from '@/components/dashboard/CategoryBreakdown';
 import { NeedsReviewSummary } from '@/components/dashboard/NeedsReviewSummary';
 import { WelcomeHero } from '@/components/dashboard/WelcomeHero';
+import { QuickActionModal } from '@/components/modals/QuickActionModal';
+import { UploadModal } from '@/components/modals/UploadModal';
 import { useState } from 'react';
 
 const Index = () => {
   const [hasTransactions] = useState(true); // This would come from actual data in a real app
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [quickActionModal, setQuickActionModal] = useState<{
+    isOpen: boolean;
+    actionType: 'transaction' | 'budget' | 'receipt' | null;
+  }>({
+    isOpen: false,
+    actionType: null
+  });
 
   const handleQuickAction = (action: 'transaction' | 'budget' | 'receipt') => {
     console.log('Quick action:', action);
-    // Handle quick actions here
+    setQuickActionModal({
+      isOpen: true,
+      actionType: action
+    });
+  };
+
+  const closeQuickActionModal = () => {
+    setQuickActionModal({
+      isOpen: false,
+      actionType: null
+    });
   };
 
   if (!hasTransactions) {
     return (
       <DashboardLayout>
         <WelcomeHero onUploadClick={() => setIsUploadModalOpen(true)} />
+        <UploadModal isOpen={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} />
       </DashboardLayout>
     );
   }
@@ -64,6 +84,14 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <UploadModal isOpen={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} />
+      <QuickActionModal
+        isOpen={quickActionModal.isOpen}
+        onClose={closeQuickActionModal}
+        actionType={quickActionModal.actionType}
+      />
     </DashboardLayout>
   );
 };
