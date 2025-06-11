@@ -1,11 +1,12 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, Wand2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Transaction {
   id: string;
@@ -47,6 +48,28 @@ export const SplitTransactionModal = ({ isOpen, onClose, transaction, onSplit }:
   const originalAmount = Math.abs(transaction?.amount || 0);
   const remaining = originalAmount - totalSplitAmount;
 
+  // Auto-calculate final split amount
+  const autoCalculateFinalSplit = () => {
+    if (splits.length < 2) return;
+    
+    const lastIndex = splits.length - 1;
+    const sumOfOtherSplits = splits
+      .slice(0, lastIndex)
+      .reduce((sum, split) => sum + split.amount, 0);
+    
+    const finalAmount = originalAmount - sumOfOtherSplits;
+    
+    if (finalAmount > 0) {
+      setSplits(prev => 
+        prev.map((split, index) => 
+          index === lastIndex 
+            ? { ...split, amount: finalAmount }
+            : split
+        )
+      );
+    }
+  };
+
   const addSplit = () => {
     setSplits([...splits, { description: '', amount: 0, category: '' }]);
   };
@@ -87,7 +110,12 @@ export const SplitTransactionModal = ({ isOpen, onClose, transaction, onSplit }:
           <DialogTitle>Split Transaction</DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-4">
+        <motion.div 
+          className="space-y-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
           <div className="bg-slate-50 p-3 rounded-lg">
             <h4 className="font-medium text-sm text-slate-700 mb-1">Original Transaction</h4>
             <p className="text-sm text-slate-600">{transaction?.description}</p>
@@ -97,78 +125,99 @@ export const SplitTransactionModal = ({ isOpen, onClose, transaction, onSplit }:
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="font-medium">Split Into:</h4>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={addSplit}
-                className="h-8 px-2"
-              >
-                <Plus size={14} className="mr-1" />
-                Add Split
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={autoCalculateFinalSplit}
+                  className="h-8 px-2"
+                  disabled={remaining <= 0}
+                >
+                  <Wand2 size={14} className="mr-1" />
+                  Auto-fill
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={addSplit}
+                  className="h-8 px-2"
+                >
+                  <Plus size={14} className="mr-1" />
+                  Add Split
+                </Button>
+              </div>
             </div>
 
-            {splits.map((split, index) => (
-              <div key={index} className="border border-slate-200 rounded-lg p-3 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-600">
-                    Split {index + 1}
-                  </span>
-                  {splits.length > 2 && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => removeSplit(index)}
-                      className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+            <AnimatePresence>
+              {splits.map((split, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="border border-slate-200 rounded-lg p-3 space-y-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-slate-600">
+                      Split {index + 1}
+                    </span>
+                    {splits.length > 2 && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => removeSplit(index)}
+                        className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                      >
+                        <Minus size={12} />
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label className="text-xs">Description</Label>
+                      <Input
+                        value={split.description}
+                        onChange={(e) => updateSplit(index, 'description', e.target.value)}
+                        placeholder="What was this for?"
+                        className="h-8"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Amount</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={split.amount || ''}
+                        onChange={(e) => updateSplit(index, 'amount', parseFloat(e.target.value) || 0)}
+                        placeholder="0.00"
+                        className="h-8"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">Category</Label>
+                    <Select 
+                      value={split.category} 
+                      onValueChange={(value) => updateSplit(index, 'category', value)}
                     >
-                      <Minus size={12} />
-                    </Button>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label className="text-xs">Description</Label>
-                    <Input
-                      value={split.description}
-                      onChange={(e) => updateSplit(index, 'description', e.target.value)}
-                      placeholder="What was this for?"
-                      className="h-8"
-                    />
+                      <SelectTrigger className="h-8">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat} value={cat}>
+                            {cat}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <div>
-                    <Label className="text-xs">Amount</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={split.amount || ''}
-                      onChange={(e) => updateSplit(index, 'amount', parseFloat(e.target.value) || 0)}
-                      placeholder="0.00"
-                      className="h-8"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-xs">Category</Label>
-                  <Select 
-                    value={split.category} 
-                    onValueChange={(value) => updateSplit(index, 'category', value)}
-                  >
-                    <SelectTrigger className="h-8">
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat} value={cat}>
-                          {cat}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            ))}
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
 
           <div className="bg-slate-50 p-3 rounded-lg">
@@ -185,9 +234,13 @@ export const SplitTransactionModal = ({ isOpen, onClose, transaction, onSplit }:
           </div>
 
           {Math.abs(remaining) > 0.01 && (
-            <p className="text-sm text-amber-600 bg-amber-50 p-2 rounded">
+            <motion.p 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-sm text-amber-600 bg-amber-50 p-2 rounded"
+            >
               Split amounts must total exactly ${originalAmount.toFixed(2)}
-            </p>
+            </motion.p>
           )}
 
           <div className="flex gap-2 pt-4">
@@ -202,7 +255,7 @@ export const SplitTransactionModal = ({ isOpen, onClose, transaction, onSplit }:
               Split Transaction
             </Button>
           </div>
-        </div>
+        </motion.div>
       </DialogContent>
     </Dialog>
   );

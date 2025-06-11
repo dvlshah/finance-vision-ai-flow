@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,8 @@ import { EditTransactionModal } from '@/components/modals/EditTransactionModal';
 import { SplitTransactionModal } from '@/components/modals/SplitTransactionModal';
 import { BulkOperationsModal } from '@/components/modals/BulkOperationsModal';
 import { ImportExportUtils } from '@/components/utilities/ImportExportUtils';
+import { Confetti } from '@/components/ui/confetti';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Transaction {
   id: string;
@@ -95,6 +96,7 @@ export const TransactionList = () => {
   const [splittingTransaction, setSplittingTransaction] = useState<Transaction | null>(null);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
   const [showImportExport, setShowImportExport] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const handleRefresh = async () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -110,6 +112,15 @@ export const TransactionList = () => {
     setTransactions(prev => 
       prev.map(t => t.id === id ? { ...t, ...updates } : t)
     );
+    
+    // Check if all transactions are now reviewed (confidence >= 90)
+    const updatedTransactions = transactions.map(t => 
+      t.id === id ? { ...t, ...updates } : t
+    );
+    const needsReview = updatedTransactions.filter(t => t.confidence < 90).length;
+    if (needsReview === 0 && transactions.some(t => t.confidence < 90)) {
+      setShowConfetti(true);
+    }
   };
 
   const handleSelectTransaction = (id: string, checked: boolean) => {
@@ -191,9 +202,16 @@ export const TransactionList = () => {
 
   return (
     <div className="relative space-y-6">
+      <Confetti 
+        isActive={showConfetti} 
+        onComplete={() => setShowConfetti(false)}
+      />
+
       {/* Pull to refresh indicator */}
       {pullDistance > 0 && (
-        <div 
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           className="absolute top-0 left-0 right-0 flex justify-center items-center bg-blue-50 text-blue-600 transition-all duration-200"
           style={{ height: `${Math.min(pullDistance, 80)}px` }}
         >
@@ -203,7 +221,7 @@ export const TransactionList = () => {
           <span className="ml-2 text-sm">
             {isRefreshing ? 'Refreshing...' : 'Pull to refresh'}
           </span>
-        </div>
+        </motion.div>
       )}
 
       {/* Review Queue */}
@@ -212,106 +230,125 @@ export const TransactionList = () => {
         onUpdateTransaction={handleUpdateTransaction}
       />
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
-              {needsReviewCount > 0 && (
-                <p className="text-sm text-amber-600 mt-1">
-                  {needsReviewCount} transactions need review
-                </p>
-              )}
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              {selectedTransactions.length > 0 && (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
+                {needsReviewCount > 0 && (
+                  <p className="text-sm text-amber-600 mt-1">
+                    {needsReviewCount} transactions need review
+                  </p>
+                )}
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                {selectedTransactions.length > 0 && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setShowBulkOperations(true)}
+                  >
+                    Bulk Actions ({selectedTransactions.length})
+                  </Button>
+                )}
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => setShowBulkOperations(true)}
+                  onClick={() => setShowImportExport(!showImportExport)}
                 >
-                  Bulk Actions ({selectedTransactions.length})
+                  <Settings size={16} className="mr-1" />
+                  Tools
                 </Button>
-              )}
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setShowImportExport(!showImportExport)}
-              >
-                <Settings size={16} className="mr-1" />
-                Tools
-              </Button>
-            </div>
-          </div>
-          
-          {/* Mobile-optimized search and filter */}
-          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
-            <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
-              <Input
-                placeholder="Search transactions or merchants..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-12 md:h-10"
-              />
+              </div>
             </div>
             
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full md:w-48 h-12 md:h-10">
-                <Filter size={16} className="mr-2" />
-                <SelectValue placeholder="Filter by category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="Food">Food</SelectItem>
-                <SelectItem value="Income">Income</SelectItem>
-                <SelectItem value="Entertainment">Entertainment</SelectItem>
-                <SelectItem value="Transportation">Transportation</SelectItem>
-                <SelectItem value="Shopping">Shopping</SelectItem>
-                <SelectItem value="Housing">Housing</SelectItem>
-                <SelectItem value="Utilities">Utilities</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardHeader>
-        
-        <CardContent>
-          {showImportExport && (
-            <div className="mb-4">
-              <ImportExportUtils 
-                transactions={transactions}
-                onImport={handleImportTransactions}
-              />
+            {/* Mobile-optimized search and filter */}
+            <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
+              <div className="relative flex-1">
+                <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                <Input
+                  placeholder="Search transactions or merchants..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 h-12 md:h-10"
+                />
+              </div>
+              
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-full md:w-48 h-12 md:h-10">
+                  <Filter size={16} className="mr-2" />
+                  <SelectValue placeholder="Filter by category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="Food">Food</SelectItem>
+                  <SelectItem value="Income">Income</SelectItem>
+                  <SelectItem value="Entertainment">Entertainment</SelectItem>
+                  <SelectItem value="Transportation">Transportation</SelectItem>
+                  <SelectItem value="Shopping">Shopping</SelectItem>
+                  <SelectItem value="Housing">Housing</SelectItem>
+                  <SelectItem value="Utilities">Utilities</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          )}
+          </CardHeader>
+          
+          <CardContent>
+            {showImportExport && (
+              <div className="mb-4">
+                <ImportExportUtils 
+                  transactions={transactions}
+                  onImport={handleImportTransactions}
+                />
+              </div>
+            )}
 
-          <div className="space-y-2">
-            {/* Select All Header */}
-            <div className="flex items-center space-x-3 py-2 border-b border-slate-100">
-              <Checkbox
-                checked={selectedTransactions.length === filteredTransactions.length && filteredTransactions.length > 0}
-                onCheckedChange={handleSelectAll}
-              />
-              <span className="text-sm font-medium text-slate-600">
-                Select All ({filteredTransactions.length})
-              </span>
+            <div className="space-y-2">
+              {/* Select All Header */}
+              <div className="flex items-center space-x-3 py-2 border-b border-slate-100">
+                <Checkbox
+                  checked={selectedTransactions.length === filteredTransactions.length && filteredTransactions.length > 0}
+                  onCheckedChange={handleSelectAll}
+                />
+                <span className="text-sm font-medium text-slate-600">
+                  Select All ({filteredTransactions.length})
+                </span>
+              </div>
+
+              <AnimatePresence mode="popLayout">
+                {filteredTransactions.map((transaction) => (
+                  <motion.div
+                    key={transaction.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8, x: -100 }}
+                    transition={{ 
+                      duration: 0.2,
+                      layout: { duration: 0.3 }
+                    }}
+                  >
+                    <TransactionRow
+                      transaction={transaction}
+                      isSelected={selectedTransactions.includes(transaction.id)}
+                      onSelect={handleSelectTransaction}
+                      onEditModal={handleEditTransactionModal}
+                      onSplit={setSplittingTransaction}
+                      onUpdateTransaction={handleUpdateTransaction}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
-
-            {filteredTransactions.map((transaction) => (
-              <TransactionRow
-                key={transaction.id}
-                transaction={transaction}
-                isSelected={selectedTransactions.includes(transaction.id)}
-                onSelect={handleSelectTransaction}
-                onEditModal={handleEditTransactionModal}
-                onSplit={setSplittingTransaction}
-                onUpdateTransaction={handleUpdateTransaction}
-              />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Modals */}
       <EditTransactionModal
