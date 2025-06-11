@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { Camera, Upload, Check, AlertCircle, Loader2, RefreshCw, Edit3 } from 'lucide-react';
+import { Camera, Upload, Check, AlertCircle, Loader2, RefreshCw, Edit3, Eye, ArrowLeft } from 'lucide-react';
 import { ConfidenceBadge } from '@/components/ui/confidence-badge';
 
 interface ReceiptScannerProps {
@@ -13,18 +13,88 @@ interface ReceiptScannerProps {
   onCancel: () => void;
 }
 
+interface BoundingBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  label: string;
+  confidence: number;
+  value: string;
+}
+
 export const ReceiptScanner = ({ onSubmit, onCancel }: ReceiptScannerProps) => {
   const [isScanning, setIsScanning] = useState(false);
   const [scannedData, setScannedData] = useState<any>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
+  const [showOCRVisualization, setShowOCRVisualization] = useState(false);
   const [progress, setProgress] = useState(0);
   const [editMode, setEditMode] = useState(false);
   const [editableData, setEditableData] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  const simulateAdvancedScanning = (fileName?: string) => {
+  const generateMockBoundingBoxes = (imageWidth: number, imageHeight: number) => {
+    // Mock bounding boxes for demonstration - in real app these would come from OCR service
+    return [
+      {
+        x: imageWidth * 0.1,
+        y: imageHeight * 0.15,
+        width: imageWidth * 0.6,
+        height: imageHeight * 0.08,
+        label: 'Merchant',
+        confidence: 92,
+        value: 'Coffee Bean & Tea'
+      },
+      {
+        x: imageWidth * 0.7,
+        y: imageHeight * 0.35,
+        width: imageWidth * 0.2,
+        height: imageHeight * 0.05,
+        label: 'Total',
+        confidence: 96,
+        value: '$24.67'
+      },
+      {
+        x: imageWidth * 0.1,
+        y: imageHeight * 0.25,
+        width: imageWidth * 0.4,
+        height: imageHeight * 0.04,
+        label: 'Date',
+        confidence: 88,
+        value: '2024-06-11'
+      },
+      {
+        x: imageWidth * 0.1,
+        y: imageHeight * 0.45,
+        width: imageWidth * 0.3,
+        height: imageHeight * 0.04,
+        label: 'Item',
+        confidence: 85,
+        value: 'Specialty Coffee'
+      },
+      {
+        x: imageWidth * 0.1,
+        y: imageHeight * 0.52,
+        width: imageWidth * 0.25,
+        height: imageHeight * 0.04,
+        label: 'Item',
+        confidence: 82,
+        value: 'Pastry'
+      }
+    ];
+  };
+
+  const simulateAdvancedScanning = (fileName?: string, file?: File) => {
     setIsScanning(true);
     setProgress(0);
+
+    // If there's a file, create an image URL for visualization
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setUploadedImage(imageUrl);
+    }
 
     // Simulate different confidence levels based on file type
     const isHighQuality = fileName?.toLowerCase().includes('receipt') || 
@@ -76,6 +146,10 @@ export const ReceiptScanner = ({ onSubmit, onCancel }: ReceiptScannerProps) => {
           
           setScannedData(mockData);
           setEditableData(mockData);
+          
+          // Show OCR visualization step
+          setShowOCRVisualization(true);
+          
           return 100;
         }
         return prev + Math.random() * 15 + 5; // More realistic progress increments
@@ -99,8 +173,23 @@ export const ReceiptScanner = ({ onSubmit, onCancel }: ReceiptScannerProps) => {
         return;
       }
       
-      simulateAdvancedScanning(file.name);
+      simulateAdvancedScanning(file.name, file);
     }
+  };
+
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    const boxes = generateMockBoundingBoxes(img.naturalWidth, img.naturalHeight);
+    setBoundingBoxes(boxes);
+  };
+
+  const handleProceedFromOCR = () => {
+    setShowOCRVisualization(false);
+  };
+
+  const handleBackToOCR = () => {
+    setShowOCRVisualization(true);
+    setEditMode(false);
   };
 
   const handleEdit = () => {
@@ -115,6 +204,9 @@ export const ReceiptScanner = ({ onSubmit, onCancel }: ReceiptScannerProps) => {
   const handleRescan = () => {
     setScannedData(null);
     setEditMode(false);
+    setShowOCRVisualization(false);
+    setUploadedImage(null);
+    setBoundingBoxes([]);
     simulateAdvancedScanning();
   };
 
@@ -148,6 +240,18 @@ export const ReceiptScanner = ({ onSubmit, onCancel }: ReceiptScannerProps) => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-center space-y-4">
+            {uploadedImage && (
+              <div className="relative w-full h-32 bg-gray-100 rounded-lg overflow-hidden">
+                <img 
+                  src={uploadedImage} 
+                  alt="Uploaded receipt" 
+                  className="w-full h-full object-cover opacity-50"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                </div>
+              </div>
+            )}
             <div className="text-sm text-muted-foreground">
               Advanced OCR and AI analysis in progress...
             </div>
@@ -166,6 +270,95 @@ export const ReceiptScanner = ({ onSubmit, onCancel }: ReceiptScannerProps) => {
     );
   }
 
+  // OCR Visualization Step
+  if (showOCRVisualization && uploadedImage && scannedData) {
+    return (
+      <Card className="w-full max-w-2xl">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Eye size={20} className="text-blue-500" />
+              OCR Analysis Results
+            </div>
+            <Button variant="outline" size="sm" onClick={handleProceedFromOCR}>
+              Continue <ArrowLeft size={16} className="ml-1 rotate-180" />
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="relative">
+            <img 
+              src={uploadedImage} 
+              alt="Receipt with OCR overlay" 
+              className="w-full max-h-96 object-contain rounded-lg border"
+              onLoad={handleImageLoad}
+            />
+            
+            {/* Bounding boxes overlay */}
+            <div className="absolute inset-0">
+              {boundingBoxes.map((box, index) => (
+                <div
+                  key={index}
+                  className="absolute border-2 border-blue-500 bg-blue-500 bg-opacity-10 rounded"
+                  style={{
+                    left: `${(box.x / 800) * 100}%`,
+                    top: `${(box.y / 600) * 100}%`,
+                    width: `${(box.width / 800) * 100}%`,
+                    height: `${(box.height / 600) * 100}%`,
+                  }}
+                >
+                  <div className="absolute -top-6 left-0 bg-blue-500 text-white text-xs px-1 py-0.5 rounded whitespace-nowrap">
+                    {box.label}: {box.value}
+                    <ConfidenceBadge confidence={box.confidence} className="ml-1" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="space-y-2">
+              <h4 className="font-medium">Detected Fields:</h4>
+              {boundingBoxes.map((box, index) => (
+                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                  <span className="font-medium">{box.label}:</span>
+                  <div className="flex items-center gap-2">
+                    <span>{box.value}</span>
+                    <ConfidenceBadge confidence={box.confidence} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="space-y-2">
+              <h4 className="font-medium">Processing Summary:</h4>
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm">
+                <div className="flex items-center gap-2 text-green-800">
+                  <Check size={16} />
+                  <span className="font-medium">OCR Complete</span>
+                </div>
+                <div className="mt-2 space-y-1 text-green-700">
+                  <div>• Merchant: {scannedData.merchant}</div>
+                  <div>• Total: ${scannedData.amount}</div>
+                  <div>• {scannedData.items?.length || 0} items detected</div>
+                  <div>• Overall confidence: {scannedData.confidence}%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-2 pt-4">
+            <Button variant="outline" onClick={onCancel} className="w-full">
+              Cancel
+            </Button>
+            <Button onClick={handleProceedFromOCR} className="w-full">
+              Continue to Review
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (scannedData) {
     return (
       <Card className="w-full max-w-md">
@@ -176,6 +369,9 @@ export const ReceiptScanner = ({ onSubmit, onCancel }: ReceiptScannerProps) => {
               Receipt Processed
             </div>
             <div className="flex gap-1">
+              <Button variant="ghost" size="sm" onClick={handleBackToOCR}>
+                <Eye size={16} />
+              </Button>
               <Button variant="ghost" size="sm" onClick={handleEdit}>
                 <Edit3 size={16} />
               </Button>
