@@ -11,6 +11,10 @@ interface SearchContextType {
   };
   setFilters: (filters: Partial<SearchContextType['filters']>) => void;
   clearFilters: () => void;
+  isNaturalLanguageMode: boolean;
+  setIsNaturalLanguageMode: (mode: boolean) => void;
+  searchSummary: any;
+  setSearchSummary: (summary: any) => void;
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
@@ -24,6 +28,8 @@ const defaultFilters = {
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFiltersState] = useState(defaultFilters);
+  const [isNaturalLanguageMode, setIsNaturalLanguageMode] = useState(false);
+  const [searchSummary, setSearchSummary] = useState<any>(null);
 
   const setFilters = (newFilters: Partial<SearchContextType['filters']>) => {
     setFiltersState(prev => ({ ...prev, ...newFilters }));
@@ -32,6 +38,8 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
   const clearFilters = () => {
     setFiltersState(defaultFilters);
     setSearchQuery('');
+    setSearchSummary(null);
+    setIsNaturalLanguageMode(false);
   };
 
   return (
@@ -40,7 +48,11 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
       setSearchQuery,
       filters,
       setFilters,
-      clearFilters
+      clearFilters,
+      isNaturalLanguageMode,
+      setIsNaturalLanguageMode,
+      searchSummary,
+      setSearchSummary
     }}>
       {children}
     </SearchContext.Provider>
