@@ -1,6 +1,7 @@
 
 import { Button } from '@/components/ui/button';
-import { Upload, Bell, User } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Upload, Bell, User, Sparkles } from 'lucide-react';
 
 interface HeaderProps {
   onUploadClick: () => void;
@@ -11,6 +12,14 @@ export const Header = ({ onUploadClick }: HeaderProps) => {
     <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between">
       <div className="flex items-center space-x-4">
         <h2 className="text-lg font-semibold text-slate-800">Dashboard</h2>
+        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-lg border border-blue-200">
+          <Sparkles className="h-3 w-3 text-blue-500" />
+          <span className="text-xs text-blue-700">Press</span>
+          <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
+            Cmd+K
+          </Badge>
+          <span className="text-xs text-blue-700">for AI assistance</span>
+        </div>
       </div>
       
       <div className="flex items-center space-x-4">
