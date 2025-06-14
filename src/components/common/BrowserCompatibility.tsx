@@ -18,6 +18,14 @@ interface BrowserInfo {
   mobile: boolean;
 }
 
+// Extend window interface for polyfills
+declare global {
+  interface Window {
+    IntersectionObserver?: any;
+    ResizeObserver?: any;
+  }
+}
+
 export const BrowserCompatibility = () => {
   const [browserInfo, setBrowserInfo] = useState<BrowserInfo | null>(null);
   const [features, setFeatures] = useState<BrowserFeature[]>([]);
@@ -167,7 +175,7 @@ export const BrowserCompatibility = () => {
     // Intersection Observer polyfill
     if (!('IntersectionObserver' in window)) {
       // Simple fallback for intersection observer
-      window.IntersectionObserver = class {
+      (window as any).IntersectionObserver = class {
         constructor(callback: any) {
           this.callback = callback;
         }
@@ -175,12 +183,12 @@ export const BrowserCompatibility = () => {
         unobserve() {}
         disconnect() {}
         callback: any;
-      } as any;
+      };
     }
 
     // ResizeObserver polyfill
     if (!('ResizeObserver' in window)) {
-      window.ResizeObserver = class {
+      (window as any).ResizeObserver = class {
         constructor(callback: any) {
           this.callback = callback;
         }
@@ -188,7 +196,7 @@ export const BrowserCompatibility = () => {
         unobserve() {}
         disconnect() {}
         callback: any;
-      } as any;
+      };
     }
 
     // CSS.supports polyfill
