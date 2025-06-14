@@ -71,6 +71,12 @@
   }
 }
 
+/* Modern grid background pattern */
+.bg-grid-slate-200\/50 {
+  background-image: radial-gradient(circle at 1px 1px, rgb(226 232 240 / 0.5) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
 /* Chart animation keyframes */
 @keyframes drawLine {
   from {
@@ -83,9 +89,95 @@
   }
 }
 
-/* Smooth transitions for all interactive elements */
+/* Modern scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced focus styles */
 @layer components {
   .transition-smooth {
     @apply transition-all duration-300 ease-in-out;
   }
+  
+  /* Custom button hover effects */
+  .btn-gradient-hover {
+    @apply relative overflow-hidden;
+  }
+  
+  .btn-gradient-hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  .btn-gradient-hover:hover::before {
+    left: 100%;
+  }
+  
+  /* Modern glassmorphism effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20;
+  }
+  
+  /* Improved focus rings */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2;
+  }
+}
+
+/* Enhanced animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Better selection colors */
+::selection {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: inherit;
 }
