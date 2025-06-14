@@ -14,6 +14,7 @@ import Categories from "./pages/Categories";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import Landing from "./pages/Landing";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const AppContent = () => {
   return (
     <>
       <Routes>
+        <Route path="/landing" element={<Landing />} />
         <Route path="/" element={<Index />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="/transactions" element={<Transactions />} />
