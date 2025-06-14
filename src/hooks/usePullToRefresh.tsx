@@ -1,24 +1,26 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-interface UsePullToRefreshProps {
-  onRefresh: () => Promise<void> | void;
+interface UsePullToRefreshOptions {
+  onRefresh?: () => Promise<void>;
+  enabled?: boolean;
   threshold?: number;
   resistance?: number;
 }
 
-export const usePullToRefresh = ({ 
-  onRefresh, 
-  threshold = 80, 
-  resistance = 0.5 
-}: UsePullToRefreshProps) => {
+export const usePullToRefresh = <T extends HTMLElement = HTMLDivElement>(
+  elementRef: React.RefObject<T>,
+  options: UsePullToRefreshOptions
+) => {
+  const { onRefresh, enabled = true, threshold = 80, resistance = 0.5 } = options;
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
+  const [isPulling, setIsPulling] = useState(false);
   const touchStartY = useRef(0);
-  const scrollElement = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const element = scrollElement.current || document.documentElement;
+    const element = elementRef.current;
+    if (!element || !enabled) return;
     
     const handleTouchStart = (e: TouchEvent) => {
       if (element.scrollTop === 0) {
@@ -35,11 +37,12 @@ export const usePullToRefresh = ({
       if (distance > 0) {
         e.preventDefault();
         setPullDistance(distance);
+        setIsPulling(true);
       }
     };
 
     const handleTouchEnd = async () => {
-      if (pullDistance > threshold && !isRefreshing) {
+      if (pullDistance > threshold && !isRefreshing && onRefresh) {
         setIsRefreshing(true);
         try {
           await onRefresh();
@@ -48,6 +51,7 @@ export const usePullToRefresh = ({
         }
       }
       setPullDistance(0);
+      setIsPulling(false);
     };
 
     element.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -59,13 +63,11 @@ export const usePullToRefresh = ({
       element.removeEventListener('touchmove', handleTouchMove);
       element.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [onRefresh, threshold, resistance, pullDistance, isRefreshing]);
+  }, [onRefresh, threshold, resistance, pullDistance, isRefreshing, enabled]);
 
   return {
     isRefreshing,
     pullDistance,
-    setScrollElement: (element: HTMLElement | null) => {
-      scrollElement.current = element;
-    }
+    isPulling
   };
 };

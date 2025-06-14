@@ -8,20 +8,18 @@ interface SwipeHandlers {
   onSwipeDown?: () => void;
 }
 
-interface UseSwipeGestureProps extends SwipeHandlers {
+interface UseSwipeGestureOptions extends SwipeHandlers {
   threshold?: number;
+  velocity?: number;
 }
 
-export const useSwipeGesture = <T extends HTMLElement = HTMLDivElement>({ 
-  onSwipeLeft, 
-  onSwipeRight, 
-  onSwipeUp, 
-  onSwipeDown, 
-  threshold = 50 
-}: UseSwipeGestureProps) => {
+export const useSwipeGesture = <T extends HTMLElement = HTMLDivElement>(
+  elementRef: React.RefObject<T>,
+  options: UseSwipeGestureOptions
+) => {
+  const { onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown, threshold = 50 } = options;
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
-  const elementRef = useRef<T>(null);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -65,6 +63,4 @@ export const useSwipeGesture = <T extends HTMLElement = HTMLDivElement>({
       element.removeEventListener('touchend', handleTouchEnd);
     };
   }, [onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown, threshold]);
-
-  return elementRef;
 };
