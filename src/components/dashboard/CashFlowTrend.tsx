@@ -1,8 +1,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Area, AreaChart } from 'recharts';
+import { CashFlowData } from '@/types/financial';
 
-const trendData = [
+const trendData: CashFlowData[] = [
   { month: 'Jan', income: 8500, expenses: 5200, netFlow: 3300 },
   { month: 'Feb', income: 8500, expenses: 5800, netFlow: 2700 },
   { month: 'Mar', income: 8500, expenses: 6100, netFlow: 2400 },

@@ -1,8 +1,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { CategoryData } from '@/types/financial';
 
-const categoryData = [
+const categoryData: CategoryData[] = [
   { name: 'Housing', value: 2100, color: '#3b82f6' },
   { name: 'Food', value: 800, color: '#ef4444' },
   { name: 'Transportation', value: 650, color: '#f59e0b' },
