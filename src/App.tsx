@@ -24,8 +24,8 @@ const AppContent = () => {
   return (
     <>
       <Routes>
-        <Route path="/landing" element={<Landing />} />
-        <Route path="/" element={<Index />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/dashboard" element={<Index />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/categories" element={<Categories />} />

@@ -16,7 +16,7 @@ const LandingHeader = () => {
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <Button asChild>
-            <Link to="/">Go to Dashboard</Link>
+            <Link to="/dashboard">Go to Dashboard</Link>
           </Button>
         </div>
       </div>

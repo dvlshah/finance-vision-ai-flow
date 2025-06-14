@@ -19,7 +19,7 @@ const Hero = () => {
         </p>
         <div className="space-y-4 md:space-y-0 md:space-x-4">
           <Button className="w-full md:w-1/3" asChild>
-            <Link to="/">Get Started Free</Link>
+            <Link to="/dashboard">Get Started Free</Link>
           </Button>
         </div>
       </div>
