@@ -5,22 +5,22 @@ import { CategoryData } from '@/types/financial';
 import { motion } from 'framer-motion';
 
 const categoryData: CategoryData[] = [
-  { name: 'Housing', value: 2100, color: '#0f172a' },
-  { name: 'Food', value: 800, color: '#475569' },
-  { name: 'Transportation', value: 650, color: '#64748b' },
-  { name: 'Entertainment', value: 400, color: '#94a3b8' },
-  { name: 'Utilities', value: 300, color: '#cbd5e1' },
-  { name: 'Shopping', value: 950, color: '#e2e8f0' },
+  { name: 'Housing', value: 2100, color: '#6366f1' },
+  { name: 'Food', value: 800, color: '#ef4444' },
+  { name: 'Transportation', value: 650, color: '#f59e0b' },
+  { name: 'Entertainment', value: 400, color: '#8b5cf6' },
+  { name: 'Utilities', value: 300, color: '#10b981' },
+  { name: 'Shopping', value: 950, color: '#f97316' },
 ];
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
-      <div className="bg-white border border-slate-200 rounded-lg p-3 shadow-lg">
+      <div className="glass-card p-3 border-0 shadow-level-2">
         <p className="font-medium text-slate-900">{data.name}</p>
         <p className="text-sm text-slate-600">
-          <span className="font-semibold" style={{ color: data.payload.color }}>
+          <span className="font-bold" style={{ color: data.payload.color }}>
             ${data.value.toLocaleString()}
           </span>
         </p>
@@ -37,24 +37,34 @@ export const CategoryBreakdown = () => {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
-      <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-        <CardHeader className="pb-2">
-          <div>
-            <CardTitle className="text-lg font-semibold text-slate-900">Spending by Category</CardTitle>
-            <p className="text-sm text-slate-500 mt-1">This month's breakdown</p>
+      <Card className="glass-card border-0 shadow-level-1 hover:shadow-level-2 transition-all duration-300">
+        <CardHeader className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 to-purple-50/50 rounded-t-2xl opacity-60" />
+          <div className="relative z-10">
+            <CardTitle className="text-lg font-semibold text-gradient-primary">Spending by Category</CardTitle>
+            <p className="text-sm text-slate-500">This month's breakdown</p>
           </div>
         </CardHeader>
         
-        <CardContent className="pt-0">
-          <ResponsiveContainer width="100%" height={280}>
+        <CardContent className="relative">
+          <ResponsiveContainer width="100%" height={320}>
             <PieChart>
+              <defs>
+                {categoryData.map((entry, index) => (
+                  <linearGradient key={`gradient-${index}`} id={`gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor={entry.color} stopOpacity={0.8} />
+                    <stop offset="100%" stopColor={entry.color} stopOpacity={1} />
+                  </linearGradient>
+                ))}
+              </defs>
+              
               <Pie
                 data={categoryData}
                 cx="50%"
                 cy="50%"
-                innerRadius={70}
-                outerRadius={100}
-                paddingAngle={2}
+                innerRadius={65}
+                outerRadius={110}
+                paddingAngle={3}
                 dataKey="value"
                 animationBegin={0}
                 animationDuration={1200}
@@ -62,9 +72,9 @@ export const CategoryBreakdown = () => {
                 {categoryData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={entry.color}
-                    stroke="white"
-                    strokeWidth={4}
+                    fill={`url(#gradient-${index})`}
+                    stroke="rgba(255,255,255,0.8)"
+                    strokeWidth={2}
                   />
                 ))}
               </Pie>
@@ -75,18 +85,11 @@ export const CategoryBreakdown = () => {
                 verticalAlign="bottom" 
                 height={60}
                 iconType="circle"
-                iconSize={8}
                 formatter={(value) => (
-                  <span className="text-sm text-slate-700 font-medium ml-2">{value}</span>
+                  <span className="text-sm text-slate-700 font-medium">{value}</span>
                 )}
                 wrapperStyle={{
-                  paddingTop: '24px',
-                  fontSize: '14px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  flexWrap: 'wrap',
-                  gap: '16px',
-                  lineHeight: '20px'
+                  paddingTop: '20px'
                 }}
               />
             </PieChart>
