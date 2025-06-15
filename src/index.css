@@ -1,4 +1,3 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&display=swap");
 @tailwind base;
@@ -7,10 +6,10 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 220 30% 99%;
+    --foreground: 222.2 85% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222.2 85% 10.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 222.2 47.4% 11.2%;
@@ -32,6 +31,8 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.75rem;
+    --glass-bg: rgba(255,255,255,0.92);
+    --glass-shadow: 0 1.5px 6px 0 rgba(0,0,0,.07), 0 0.5px 2px 0 rgba(0,0,0,0.03);
     
     /* Modern Design System Variables */
     --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
@@ -56,6 +57,17 @@
     --animation-medium: 300ms;
     --animation-slow: 500ms;
     --animation-duration: var(--animation-medium);
+    
+    /* Updated typography */
+    --font-display: "Clash Display", "Inter", "Segoe UI", Arial, sans-serif;
+    --font-sans: "Inter", "Segoe UI", Arial, sans-serif;
+    --font-weight-bold: 700;
+    --font-weight-semibold: 600;
+    --font-weight-normal: 500;
+    --font-size-lg: 1.125rem;
+    --font-size-base: 1rem;
+    --font-size-sm: 0.94rem;
+    --font-size-xs: 0.86rem;
   }
 
   .dark {
@@ -209,6 +221,81 @@
   .high-contrast *:focus {
     outline: 3px solid;
     outline-offset: 2px;
+  }
+  
+  h1, .text-3xl, .font-display { font-family: var(--font-display); font-weight: var(--font-weight-bold); letter-spacing: -0.01em; }
+  h1, .text-3xl { font-size: 2.25rem; }
+  h2, .text-2xl { font-weight: var(--font-weight-semibold); font-size: 1.5rem; }
+  h3, .text-xl { font-size: 1.25rem; }
+  h4, .text-lg { font-size: 1.125rem; }
+  .font-semibold { font-weight: var(--font-weight-semibold); }
+  .font-bold { font-weight: var(--font-weight-bold); }
+  .text-base { font-size: var(--font-size-base); }
+  .text-sm { font-size: var(--font-size-sm); }
+  .text-xs { font-size: var(--font-size-xs); }
+
+  /* Override shadcn inputs/buttons for contrast: */
+  input[type="text"], input[type="email"], input[type="password"], select,
+  .glass-card input, .glass-card select, .glass-card textarea {
+    background: #fff !important;
+    color: hsl(var(--foreground)) !important;
+    border: 1.5px solid #e0e7ef !important;
+    border-radius: 0.75rem !important;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: normal;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: 2px solid #6366f1 !important;
+    border-color: #6366f1 !important;
+    background: #fff;
+  }
+  .glass-card {
+    background: var(--glass-bg) !important;
+    box-shadow: var(--glass-shadow);
+    border-radius: 1.25rem;
+  }
+  .btn-gradient, button, .shadcn-btn {
+    background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+    color: #fff !important;
+    border: none !important;
+    border-radius: 0.75rem;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-base);
+    box-shadow: 0 1.5px 6px 0 rgba(0,0,0,.07);
+    transition: all 0.18s;
+  }
+  .btn-gradient:hover, button:focus, .shadcn-btn:focus {
+    background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+    color: #fff;
+    box-shadow: 0 4px 18px 0 rgba(99,102,241,0.10);
+  }
+  .btn-gradient[disabled], button[disabled], .shadcn-btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  label, .form-label {
+    font-weight: var(--font-weight-semibold);
+    color: hsl(var(--foreground)); 
+    font-size: var(--font-size-sm);
+    margin-bottom: 0.3em;
+    display: block;
+  }
+  /* High-contrast switch/toggle */
+  .shadcn-switch, .switch {
+    background: #e5e6ef !important;
+    border: 1.5px solid #d1d5db !important;
+  }
+  .shadcn-switch:checked, .switch:checked {
+    background: #6366f1 !important;
+    border-color: #6366f1 !important;
+  }
+  /* Badge/text elements */
+  .badge, .shadcn-badge {
+    background: #f1f5f9;
+    color: #22223b;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-xs);
   }
 }
 
