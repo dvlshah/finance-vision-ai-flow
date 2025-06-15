@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -98,12 +99,14 @@ export const TransactionList = () => {
   const [showImportExport, setShowImportExport] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const handleRefresh = async () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     console.log('Refreshing transactions...');
   };
 
-  const { isRefreshing, pullDistance } = usePullToRefresh({ 
+  const { isRefreshing, pullDistance, isPulling } = usePullToRefresh(containerRef, { 
     onRefresh: handleRefresh,
     threshold: 80 
   });
@@ -201,7 +204,7 @@ export const TransactionList = () => {
   };
 
   return (
-    <div className="relative space-y-6">
+    <div ref={containerRef} className="relative space-y-6">
       <Confetti 
         isActive={showConfetti} 
         onComplete={() => setShowConfetti(false)}
@@ -394,7 +397,9 @@ const TransactionRow = ({
   onSplit, 
   onUpdateTransaction 
 }: TransactionRowProps) => {
-  const swipeRef = useSwipeGesture<HTMLDivElement>({
+  const swipeRef = useRef<HTMLDivElement>(null);
+
+  useSwipeGesture(swipeRef, {
     onSwipeRight: () => onEditModal(transaction),
     onSwipeLeft: () => console.log('Swipe left - could delete'),
     threshold: 100

@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -20,27 +19,16 @@ export default {
 		},
 		extend: {
 			colors: {
-				border: 'hsl(var(--border))',
-				input: 'hsl(var(--input))',
-				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
-				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
-				},
-				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
-				},
-				destructive: {
-					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))'
-				},
-				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
-				},
+				border: '#dbeafe',
+				input: '#f1f5f9',
+				ring: '#6366f1',
+				background: '#f8fafc',
+				foreground: '#18181b',
+				card: { DEFAULT: '#ffffff', foreground: '#22223b' },
+				primary: { DEFAULT: '#3b82f6', foreground: '#ffffff' },
+				secondary: { DEFAULT: '#f1f5f9', foreground: '#23263b' },
+				destructive: { DEFAULT: '#ef4444', foreground: '#fff' },
+				muted: { DEFAULT: '#e5e7eb', foreground: '#22223b' },
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
 					foreground: 'hsl(var(--accent-foreground))'
@@ -48,10 +36,6 @@ export default {
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
 					foreground: 'hsl(var(--popover-foreground))'
-				},
-				card: {
-					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
@@ -91,8 +75,8 @@ export default {
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
-				heading: ['Inter', 'system-ui', 'sans-serif'],
-				display: ['"Clash Display"', 'Inter', 'sans-serif'],
+				heading: ['Clash Display', 'Inter', 'system-ui'],
+				display: ['Clash Display', 'Inter', 'system-ui'],
 			},
 			fontSize: {
 				'xs': ['0.75rem', { lineHeight: '1rem' }],
