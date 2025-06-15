@@ -1,3 +1,4 @@
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&display=swap");
 @tailwind base;
@@ -6,10 +7,10 @@
 
 @layer base {
   :root {
-    --background: 220 30% 99%;
-    --foreground: 222.2 85% 8%;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 85% 10.9%;
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 222.2 47.4% 11.2%;
@@ -31,8 +32,6 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.75rem;
-    --glass-bg: rgba(255,255,255,0.92);
-    --glass-shadow: 0 1.5px 6px 0 rgba(0,0,0,.07), 0 0.5px 2px 0 rgba(0,0,0,0.03);
     
     /* Modern Design System Variables */
     --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
@@ -56,18 +55,6 @@
     --animation-fast: 150ms;
     --animation-medium: 300ms;
     --animation-slow: 500ms;
-    --animation-duration: var(--animation-medium);
-    
-    /* Updated typography */
-    --font-display: "Clash Display", "Inter", "Segoe UI", Arial, sans-serif;
-    --font-sans: "Inter", "Segoe UI", Arial, sans-serif;
-    --font-weight-bold: 700;
-    --font-weight-semibold: 600;
-    --font-weight-normal: 500;
-    --font-size-lg: 1.125rem;
-    --font-size-base: 1rem;
-    --font-size-sm: 0.94rem;
-    --font-size-xs: 0.86rem;
   }
 
   .dark {
@@ -101,60 +88,6 @@
     --glass-border: rgba(148, 163, 184, 0.2);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
-
-  /* High Contrast Mode */
-  .high-contrast {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
-    --border: 0 0% 0%;
-    --glass-bg: rgba(255, 255, 255, 1);
-    --glass-border: rgba(0, 0, 0, 1);
-    --shadow-level-1: 0 0 0 2px rgba(0, 0, 0, 1);
-    --shadow-level-2: 0 0 0 3px rgba(0, 0, 0, 1);
-    --shadow-level-3: 0 0 0 4px rgba(0, 0, 0, 1);
-  }
-
-  .high-contrast.dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    --border: 0 0% 100%;
-    --glass-bg: rgba(0, 0, 0, 1);
-    --glass-border: rgba(255, 255, 255, 1);
-  }
-
-  /* Large Text Mode */
-  .large-text {
-    font-size: 120%;
-  }
-
-  .large-text h1 { font-size: 3rem; }
-  .large-text h2 { font-size: 2.5rem; }
-  .large-text h3 { font-size: 2rem; }
-  .large-text h4 { font-size: 1.75rem; }
-  .large-text .text-sm { font-size: 1.125rem; }
-  .large-text .text-xs { font-size: 1rem; }
-
-  /* Reduced Motion */
-  .reduce-motion *,
-  .reduce-motion *::before,
-  .reduce-motion *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  /* Screen Reader Optimizations */
-  .screen-reader .sr-only {
-    position: static !important;
-    width: auto !important;
-    height: auto !important;
-    padding: 0.25rem !important;
-    margin: 0.25rem !important;
-    overflow: visible !important;
-    clip: auto !important;
-    white-space: normal !important;
-  }
 }
 
 @layer base {
@@ -166,23 +99,12 @@
     scroll-behavior: smooth;
   }
   
-  @supports (scroll-behavior: smooth) {
-    html {
-      scroll-behavior: smooth;
-    }
-  }
-  
   body {
     @apply bg-background text-foreground antialiased;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     background: var(--gradient-ambient);
     min-height: 100vh;
-    
-    /* Improve text rendering */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
   }
   
   /* Modern Typography */
@@ -190,112 +112,9 @@
     font-family: "Clash Display", "Inter", sans-serif;
   }
   
-  /* Enhanced Focus Styles */
+  /* Focus styles */
   *:focus-visible {
     @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-background;
-  }
-
-  /* Keyboard Navigation Enhancements */
-  .keyboard-navigation *:focus {
-    @apply ring-2 ring-blue-500 ring-offset-2 ring-offset-background;
-  }
-
-  /* Skip Links */
-  .skip-link {
-    position: absolute;
-    top: -40px;
-    left: 6px;
-    background: var(--background);
-    color: var(--foreground);
-    padding: 8px;
-    text-decoration: none;
-    border-radius: 4px;
-    z-index: 1000;
-  }
-
-  .skip-link:focus {
-    top: 6px;
-  }
-
-  /* High Contrast Focus */
-  .high-contrast *:focus {
-    outline: 3px solid;
-    outline-offset: 2px;
-  }
-  
-  h1, .text-3xl, .font-display { font-family: var(--font-display); font-weight: var(--font-weight-bold); letter-spacing: -0.01em; }
-  h1, .text-3xl { font-size: 2.25rem; }
-  h2, .text-2xl { font-weight: var(--font-weight-semibold); font-size: 1.5rem; }
-  h3, .text-xl { font-size: 1.25rem; }
-  h4, .text-lg { font-size: 1.125rem; }
-  .font-semibold { font-weight: var(--font-weight-semibold); }
-  .font-bold { font-weight: var(--font-weight-bold); }
-  .text-base { font-size: var(--font-size-base); }
-  .text-sm { font-size: var(--font-size-sm); }
-  .text-xs { font-size: var(--font-size-xs); }
-
-  /* Override shadcn inputs/buttons for contrast: */
-  input[type="text"], input[type="email"], input[type="password"], select,
-  .glass-card input, .glass-card select, .glass-card textarea {
-    background: #fff !important;
-    color: hsl(var(--foreground)) !important;
-    border: 1.5px solid #e0e7ef !important;
-    border-radius: 0.75rem !important;
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-normal);
-    letter-spacing: normal;
-  }
-  input:focus, select:focus, textarea:focus {
-    outline: 2px solid #6366f1 !important;
-    border-color: #6366f1 !important;
-    background: #fff;
-  }
-  .glass-card {
-    background: var(--glass-bg) !important;
-    box-shadow: var(--glass-shadow);
-    border-radius: 1.25rem;
-  }
-  .btn-gradient, button, .shadcn-btn {
-    background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
-    color: #fff !important;
-    border: none !important;
-    border-radius: 0.75rem;
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-base);
-    box-shadow: 0 1.5px 6px 0 rgba(0,0,0,.07);
-    transition: all 0.18s;
-  }
-  .btn-gradient:hover, button:focus, .shadcn-btn:focus {
-    background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
-    color: #fff;
-    box-shadow: 0 4px 18px 0 rgba(99,102,241,0.10);
-  }
-  .btn-gradient[disabled], button[disabled], .shadcn-btn[disabled] {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  label, .form-label {
-    font-weight: var(--font-weight-semibold);
-    color: hsl(var(--foreground)); 
-    font-size: var(--font-size-sm);
-    margin-bottom: 0.3em;
-    display: block;
-  }
-  /* High-contrast switch/toggle */
-  .shadcn-switch, .switch {
-    background: #e5e6ef !important;
-    border: 1.5px solid #d1d5db !important;
-  }
-  .shadcn-switch:checked, .switch:checked {
-    background: #6366f1 !important;
-    border-color: #6366f1 !important;
-  }
-  /* Badge/text elements */
-  .badge, .shadcn-badge {
-    background: #f1f5f9;
-    color: #22223b;
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-xs);
   }
 }
 
@@ -307,17 +126,6 @@
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow);
-  }
-  
-  /* Fallback for browsers without backdrop-filter */
-  @supports not (backdrop-filter: blur(20px)) {
-    .glass {
-      background: rgba(255, 255, 255, 0.95);
-    }
-    
-    .dark .glass {
-      background: rgba(15, 23, 42, 0.95);
-    }
   }
   
   .glass-card {
@@ -344,8 +152,7 @@
   /* Modern Button Styles */
   .btn-gradient {
     background: var(--gradient-primary);
-    @apply text-white border-0 shadow-level-2 transition-all;
-    transition-duration: var(--animation-duration);
+    @apply text-white border-0 shadow-level-2 transition-all duration-300;
   }
   
   .btn-gradient:hover {
@@ -358,13 +165,6 @@
     box-shadow: var(--shadow-level-1);
   }
   
-  /* High Contrast Button */
-  .high-contrast .btn-gradient {
-    background: var(--foreground);
-    color: var(--background);
-    border: 2px solid var(--foreground);
-  }
-  
   /* Floating Elements */
   .floating {
     @apply glass-card shadow-level-2;
@@ -373,8 +173,7 @@
   
   /* Interactive States */
   .interactive {
-    @apply transition-all cursor-pointer;
-    transition-duration: var(--animation-duration);
+    @apply transition-all duration-300 cursor-pointer;
   }
   
   .interactive:hover {
@@ -405,13 +204,6 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-  }
-  
-  /* High Contrast Text Gradients */
-  .high-contrast .text-gradient-primary {
-    background: none;
-    -webkit-text-fill-color: var(--foreground);
-    color: var(--foreground);
   }
   
   /* Modern Grid System */
@@ -461,47 +253,6 @@
   
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: rgba(156, 163, 175, 0.8);
-  }
-
-  /* Enhanced Accessibility */
-  .visually-hidden {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-  }
-
-  /* Loading States */
-  .loading-skeleton {
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    background-size: 200px 100%;
-    animation: shimmer 1.5s infinite;
-  }
-
-  /* Error States */
-  .error-boundary {
-    @apply glass-card p-6 text-center;
-    border: 2px dashed rgba(239, 68, 68, 0.3);
-    background: rgba(254, 242, 242, 0.5);
-  }
-
-  /* Print Styles */
-  @media print {
-    .glass {
-      background: white !important;
-      backdrop-filter: none !important;
-      border: 1px solid #e5e7eb !important;
-      box-shadow: none !important;
-    }
-    
-    .no-print {
-      display: none !important;
-    }
   }
 }
 
@@ -606,15 +357,15 @@
 }
 
 .animate-slide-in-up {
-  animation: slideInUp var(--animation-slow) ease-out;
+  animation: slideInUp 0.5s ease-out;
 }
 
 .animate-slide-in-right {
-  animation: slideInRight var(--animation-slow) ease-out;
+  animation: slideInRight 0.5s ease-out;
 }
 
 .animate-scale-in {
-  animation: scaleIn var(--animation-medium) ease-out;
+  animation: scaleIn 0.3s ease-out;
 }
 
 .animate-pulse-slow {
@@ -638,7 +389,26 @@
   color: inherit;
 }
 
-/* Reduced Motion Preferences */
+/* Print Styles */
+@media print {
+  .glass {
+    background: white !important;
+    backdrop-filter: none !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .glass {
+    background: white;
+    backdrop-filter: none;
+    border: 2px solid black;
+  }
+}
+
+/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -646,103 +416,5 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-  
-  .animate-float,
-  .animate-glow,
-  .animate-shimmer {
-    animation: none !important;
-  }
-}
-
-/* High Contrast Mode */
-@media (prefers-contrast: high) {
-  .glass {
-    background: var(--background);
-    backdrop-filter: none;
-    border: 2px solid var(--foreground);
-  }
-  
-  .shadow-level-1,
-  .shadow-level-2,
-  .shadow-level-3 {
-    box-shadow: 0 0 0 2px var(--foreground);
-  }
-}
-
-/* Dark Mode Media Query */
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-  }
-}
-
-/* Focus Management */
-.focus-trap {
-  position: relative;
-}
-
-.focus-trap::before,
-.focus-trap::after {
-  content: '';
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Live Region for Screen Readers */
-.live-region {
-  position: absolute;
-  left: -10000px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-/* Error and Success States */
-.state-error {
-  border-color: rgb(239 68 68);
-  background-color: rgba(254, 242, 242, 0.5);
-}
-
-.state-success {
-  border-color: rgb(34 197 94);
-  background-color: rgba(240, 253, 244, 0.5);
-}
-
-.state-warning {
-  border-color: rgb(245 158 11);
-  background-color: rgba(255, 251, 235, 0.5);
-}
-
-/* Browser-specific fixes */
-/* Safari */
-@supports (-webkit-appearance: none) {
-  .glass {
-    -webkit-backdrop-filter: blur(20px);
-  }
-}
-
-/* Firefox */
-@-moz-document url-prefix() {
-  .glass {
-    background: rgba(255, 255, 255, 0.9);
-  }
-}
-
-/* Internet Explorer / Edge fallbacks */
-@supports not (display: grid) {
-  .dashboard-grid {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  
-  .dashboard-grid > * {
-    flex: 1 1 300px;
-    margin: 0.75rem;
   }
 }
