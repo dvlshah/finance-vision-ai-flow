@@ -13,8 +13,6 @@ import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { DashboardSkeletonGrid } from '@/components/common/EnhancedSkeleton';
 import { MobileGestures } from '@/components/navigation/MobileGestures';
 import { PerformanceMonitor } from '@/components/common/PerformanceMonitor';
-import { AccessibilityEnhancer } from '@/components/common/AccessibilityEnhancer';
-import { BrowserCompatibility } from '@/components/common/BrowserCompatibility';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useModalState } from '@/hooks/useModalState';
 import { motion } from 'framer-motion';
@@ -49,8 +47,6 @@ const Index = () => {
           <DashboardSkeletonGrid />
         </MobileGestures>
         <PerformanceMonitor />
-        <AccessibilityEnhancer />
-        <BrowserCompatibility />
       </DashboardLayout>
     );
   }
@@ -65,128 +61,92 @@ const Index = () => {
           </ErrorBoundary>
         </MobileGestures>
         <PerformanceMonitor />
-        <AccessibilityEnhancer />
-        <BrowserCompatibility />
       </DashboardLayout>
     );
   }
 
   return (
     <DashboardLayout>
-      {/* Skip Links for Accessibility */}
-      <a 
-        href="#main-content" 
-        className="skip-link visually-hidden focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded"
-        id="skip-to-main"
-      >
-        Skip to main content
-      </a>
-
       <MobileGestures 
         onRefresh={handleRefresh}
         onSwipeLeft={handleSwipeLeft}
         onSwipeRight={handleSwipeRight}
       >
         <ErrorBoundary>
-          {/* Live region for screen reader announcements */}
-          <div 
-            id="announcements" 
-            aria-live="polite" 
-            aria-atomic="true" 
-            className="visually-hidden"
-          />
-
-          <main 
-            id="main-content"
-            role="main"
-            aria-label="Financial Dashboard"
+          <motion.div 
+            className="space-y-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
           >
+            {/* Hero Section - Financial Health Score (Enhanced) */}
             <motion.div 
-              className="space-y-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              {/* Hero Section - Financial Health Score (Enhanced) */}
-              <motion.section 
-                className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                aria-label="Financial Health Overview"
+              <div className="lg:col-span-2">
+                <FinancialHealthScore score={78} trend="up" changePercent={5.3} />
+              </div>
+              <motion.div 
+                className="flex items-center justify-center lg:justify-end"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <div className="lg:col-span-2">
-                  <FinancialHealthScore score={78} trend="up" changePercent={5.3} />
+                <div className="text-center lg:text-right space-y-3">
+                  <motion.h1 
+                    className="text-3xl lg:text-4xl font-bold text-gradient-primary font-display"
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                  >
+                    Welcome back!
+                  </motion.h1>
+                  <motion.p 
+                    className="text-slate-600 text-lg"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                  >
+                    Your financial overview for today
+                  </motion.p>
+                  <motion.div 
+                    className="flex items-center justify-center lg:justify-end gap-2 text-sm text-slate-500"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                  >
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-glow" />
+                    <span>All systems operational</span>
+                  </motion.div>
                 </div>
-                <motion.div 
-                  className="flex items-center justify-center lg:justify-end"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  <div className="text-center lg:text-right space-y-3">
-                    <motion.h1 
-                      className="text-3xl lg:text-4xl font-bold text-gradient-primary font-display"
-                      initial={{ scale: 0.9 }}
-                      animate={{ scale: 1 }}
-                      transition={{ duration: 0.6, delay: 0.3 }}
-                    >
-                      Welcome back!
-                    </motion.h1>
-                    <motion.p 
-                      className="text-slate-600 text-lg"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.4 }}
-                    >
-                      Your financial overview for today
-                    </motion.p>
-                    <motion.div 
-                      className="flex items-center justify-center lg:justify-end gap-2 text-sm text-slate-500"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.5 }}
-                    >
-                      <div 
-                        className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-glow" 
-                        aria-hidden="true"
-                      />
-                      <span>All systems operational</span>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              </motion.section>
-
-              {/* Primary CTA - Quick Actions (Enhanced) */}
-              <section aria-label="Quick Actions">
-                <QuickActions 
-                  onUploadClick={uploadModal.open} 
-                  onQuickAction={handleQuickAction} 
-                />
-              </section>
-
-              {/* AI Spotlight - Enhanced with modern design */}
-              <section aria-label="AI Insights">
-                <AISpotlight />
-              </section>
-
-              {/* Main Chart - Enhanced Cash Flow Trend */}
-              <section 
-                className="grid grid-cols-1 xl:grid-cols-3 gap-6"
-                aria-label="Financial Analytics"
-              >
-                <div className="xl:col-span-2">
-                  <CashFlowTrend />
-                </div>
-                <div className="space-y-6">
-                  {/* Supporting Info - Category Breakdown */}
-                  <CategoryBreakdown />
-                  {/* Needs Review Summary */}
-                  <NeedsReviewSummary />
-                </div>
-              </section>
+              </motion.div>
             </motion.div>
-          </main>
+
+            {/* Primary CTA - Quick Actions (Enhanced) */}
+            <QuickActions 
+              onUploadClick={uploadModal.open} 
+              onQuickAction={handleQuickAction} 
+            />
+
+            {/* AI Spotlight - Enhanced with modern design */}
+            <AISpotlight />
+
+            {/* Main Chart - Enhanced Cash Flow Trend */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              <div className="xl:col-span-2">
+                <CashFlowTrend />
+              </div>
+              <div className="space-y-6">
+                {/* Supporting Info - Category Breakdown */}
+                <CategoryBreakdown />
+                {/* Needs Review Summary */}
+                <NeedsReviewSummary />
+              </div>
+            </div>
+          </motion.div>
 
           {/* Modals */}
           <UploadModal isOpen={uploadModal.isOpen} onClose={uploadModal.close} />
@@ -198,10 +158,8 @@ const Index = () => {
         </ErrorBoundary>
       </MobileGestures>
       
-      {/* Performance and Accessibility Monitoring */}
+      {/* Performance monitoring in development */}
       <PerformanceMonitor />
-      <AccessibilityEnhancer />
-      <BrowserCompatibility />
     </DashboardLayout>
   );
 };
