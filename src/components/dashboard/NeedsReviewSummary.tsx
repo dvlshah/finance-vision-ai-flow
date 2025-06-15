@@ -11,25 +11,22 @@ const reviewItems = [
     count: 3,
     type: 'Low Confidence',
     description: 'AI needs help categorizing',
-    color: 'bg-amber-50 text-amber-700 border-amber-200',
     icon: AlertTriangle,
-    iconColor: 'text-amber-600'
+    iconColor: 'text-amber-600',
   },
   {
     count: 1,
     type: 'Duplicate',
     description: 'Possible duplicate transaction',
-    color: 'bg-red-50 text-red-700 border-red-200',
     icon: AlertTriangle,
-    iconColor: 'text-red-600'
+    iconColor: 'text-red-600',
   },
   {
     count: 2,
     type: 'Unusual',
     description: 'Spending outside normal patterns',
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
     icon: Eye,
-    iconColor: 'text-blue-600'
+    iconColor: 'text-blue-600',
   }
 ];
 
@@ -73,20 +70,15 @@ export const NeedsReviewSummary = () => {
     >
       <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-50">
-                <AlertTriangle className="h-4 w-4 text-amber-600" />
-              </div>
-              <div>
-                <span className="text-slate-900 font-semibold">Needs Review</span>
-                <p className="text-xs text-slate-500 font-normal mt-0.5">Requires your attention</p>
-              </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-lg font-semibold text-slate-900">Needs Review</CardTitle>
+              <p className="text-sm text-slate-500 mt-1">Requires your attention</p>
             </div>
-            <Badge className="bg-amber-50 text-amber-700 border-amber-200 font-medium">
+            <Badge variant="outline" className="h-8 w-8 flex items-center justify-center rounded-full text-base font-bold bg-amber-100 text-amber-800 border-amber-200">
               {totalReviews}
             </Badge>
-          </CardTitle>
+          </div>
         </CardHeader>
         
         <CardContent className="pt-0 space-y-3">
@@ -98,12 +90,12 @@ export const NeedsReviewSummary = () => {
               transition={{ duration: 0.4, delay: index * 0.1 }}
               className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100 hover:bg-slate-100 transition-colors duration-200"
             >
-              <div className="flex items-center gap-3">
-                <Badge className={`${item.color} px-2 py-1 text-xs font-semibold`}>
+              <div className="flex items-center gap-4">
+                <Badge className={`w-6 h-6 flex items-center justify-center text-xs font-bold rounded-full border ${item.iconColor} bg-white`}>
                   {item.count}
                 </Badge>
-                <div className="flex items-center gap-2">
-                  <item.icon size={14} className={item.iconColor} />
+                <div className="flex items-start gap-3">
+                  <item.icon size={16} className={`${item.iconColor} mt-0.5`} />
                   <div>
                     <div className="font-medium text-sm text-slate-900">{item.type}</div>
                     <div className="text-xs text-slate-500">{item.description}</div>

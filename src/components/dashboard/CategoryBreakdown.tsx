@@ -38,7 +38,7 @@ export const CategoryBreakdown = () => {
       transition={{ duration: 0.5, delay: 0.2 }}
     >
       <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-        <CardHeader className="pb-4">
+        <CardHeader className="pb-2">
           <div>
             <CardTitle className="text-lg font-semibold text-slate-900">Spending by Category</CardTitle>
             <p className="text-sm text-slate-500 mt-1">This month's breakdown</p>
@@ -52,7 +52,7 @@ export const CategoryBreakdown = () => {
                 data={categoryData}
                 cx="50%"
                 cy="50%"
-                innerRadius={50}
+                innerRadius={70}
                 outerRadius={100}
                 paddingAngle={2}
                 dataKey="value"
@@ -64,7 +64,7 @@ export const CategoryBreakdown = () => {
                     key={`cell-${index}`} 
                     fill={entry.color}
                     stroke="white"
-                    strokeWidth={2}
+                    strokeWidth={4}
                   />
                 ))}
               </Pie>
@@ -73,14 +73,20 @@ export const CategoryBreakdown = () => {
               
               <Legend 
                 verticalAlign="bottom" 
-                height={50}
+                height={60}
                 iconType="circle"
+                iconSize={8}
                 formatter={(value) => (
-                  <span className="text-xs text-slate-700 font-medium">{value}</span>
+                  <span className="text-sm text-slate-700 font-medium ml-2">{value}</span>
                 )}
                 wrapperStyle={{
-                  paddingTop: '16px',
-                  fontSize: '12px'
+                  paddingTop: '24px',
+                  fontSize: '14px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  flexWrap: 'wrap',
+                  gap: '16px',
+                  lineHeight: '20px'
                 }}
               />
             </PieChart>

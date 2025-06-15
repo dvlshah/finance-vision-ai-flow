@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -30,99 +29,73 @@ export const Sidebar = () => {
 
   return (
     <div className={cn(
-      "h-screen glass border-r border-glass-border transition-all duration-500 flex flex-col backdrop-blur-xl animate-slide-in-right",
+      "h-screen bg-white border-r border-slate-200 transition-all duration-300 flex flex-col",
       isCollapsed ? "w-16" : "w-64"
     )}>
-      {/* Header */}
-      <div className="p-4 border-b border-glass-border">
-        <div className="flex items-center justify-between">
-          {!isCollapsed && (
-            <Link to="/dashboard" className="flex items-center gap-3 group">
-              <div className="relative">
-                <Coins className="h-6 w-6 text-blue-600 group-hover:rotate-12 transition-transform duration-300" />
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-gradient-primary rounded-full animate-pulse"></div>
-                <Sparkles className="absolute -bottom-1 -left-1 w-3 h-3 text-purple-500 opacity-70 animate-pulse" size={12} />
-              </div>
-              <span className="font-bold text-gradient-primary font-display text-lg group-hover:scale-105 transition-transform duration-300">
-                FinanceVision
-              </span>
-            </Link>
-          )}
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 rounded-lg glass-card hover:shadow-level-2 transition-all duration-300 group"
-          >
-            {isCollapsed ? 
-              <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" /> : 
-              <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
-            }
-          </button>
-        </div>
-      </div>
-      
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2 custom-scrollbar overflow-y-auto">
-        {menuItems.map((item, index) => {
-          const isActive = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 group relative stagger-1",
-                `stagger-${index + 1}`,
-                isActive 
-                  ? "glass-card shadow-level-2 text-blue-600 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 border border-blue-200/50" 
-                  : "hover:glass-card hover:shadow-level-1 hover:text-blue-600 text-slate-700"
-              )}
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <item.icon 
-                size={20} 
-                className={cn(
-                  "transition-all duration-300 group-hover:scale-110",
-                  isActive 
-                    ? "text-blue-600 animate-pulse" 
-                    : "text-slate-500 group-hover:text-blue-600"
-                )} 
-              />
-              {!isCollapsed && (
-                <span className={cn(
-                  "text-sm font-medium transition-all duration-300 group-hover:translate-x-1",
-                  isActive 
-                    ? "text-blue-600 font-semibold" 
-                    : "text-slate-700 group-hover:text-blue-600"
-                )}>
-                  {item.label}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="p-4 border-b border-slate-200">
+          <div className={cn("flex items-center", isCollapsed ? 'justify-center' : 'justify-between')}>
+            {!isCollapsed && (
+              <Link to="/dashboard" className="flex items-center gap-2 group">
+                <Coins className="h-6 w-6 text-blue-600" />
+                <span className="font-bold text-slate-800 font-display text-lg">
+                  FinanceVision
                 </span>
-              )}
-              
-              {/* Active indicator */}
-              {isActive && (
-                <div className="absolute right-2 w-2 h-2 bg-gradient-primary rounded-full animate-pulse shadow-glow" />
-              )}
-              
-              {/* Hover glow effect */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
-            </Link>
-          );
-        })}
-      </nav>
+              </Link>
+            )}
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+            >
+              {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            </button>
+          </div>
+        </div>
+        
+        {/* Navigation */}
+        <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
+          {menuItems.map((item) => {
+            const isActive = location.pathname.startsWith(item.path);
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  "flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 group",
+                  isCollapsed ? 'justify-center' : '',
+                  isActive 
+                    ? "bg-slate-100 text-slate-900 font-semibold" 
+                    : "hover:bg-slate-100 text-slate-600 hover:text-slate-900"
+                )}
+              >
+                <item.icon 
+                  size={20} 
+                  className={cn(isActive ? "text-blue-600" : "text-slate-500 group-hover:text-slate-800")} 
+                />
+                {!isCollapsed && (
+                  <span className="text-sm font-medium">
+                    {item.label}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
 
       {/* Footer */}
       {!isCollapsed && (
-        <div className="p-4 border-t border-glass-border animate-fade-in">
-          <div className="text-xs text-slate-500 text-center space-y-2">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-glow"></div>
-              <span className="font-medium">All systems operational</span>
+        <div className="p-4 border-t border-slate-200">
+          <div className="text-xs text-slate-500 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+              <span>All systems operational</span>
             </div>
-            <div className="font-mono opacity-70">v2.1.0</div>
-            <div className="mt-2 p-2 glass-card rounded-lg">
-              <div className="flex items-center justify-center gap-1 text-purple-600">
-                <Sparkles size={12} className="animate-pulse" />
-                <span className="text-xs font-medium">AI Enhanced</span>
-              </div>
+            <div className="font-mono">v2.1.0</div>
+            <div className="flex items-center gap-1.5 text-purple-600">
+              <Sparkles size={14} />
+              <span className="font-medium">AI Enhanced</span>
             </div>
           </div>
         </div>
