@@ -33,12 +33,10 @@ const Index = () => {
   };
 
   const handleSwipeLeft = () => {
-    // Navigate to next section or page
     console.log('Swiped left - navigate forward');
   };
 
   const handleSwipeRight = () => {
-    // Navigate to previous section or page  
     console.log('Swiped right - navigate back');
   };
 
@@ -73,10 +71,9 @@ const Index = () => {
 
   return (
     <DashboardLayout>
-      {/* Skip Links for Accessibility */}
       <a 
         href="#main-content" 
-        className="skip-link visually-hidden focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded"
+        className="skip-link visually-hidden focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-slate-900 focus:text-white focus:rounded-lg"
         id="skip-to-main"
       >
         Skip to main content
@@ -88,7 +85,6 @@ const Index = () => {
         onSwipeRight={handleSwipeRight}
       >
         <ErrorBoundary>
-          {/* Live region for screen reader announcements */}
           <div 
             id="announcements" 
             aria-live="polite" 
@@ -100,14 +96,15 @@ const Index = () => {
             id="main-content"
             role="main"
             aria-label="Financial Dashboard"
+            className="space-y-8"
           >
             <motion.div 
-              className="space-y-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6 }}
+              className="space-y-8"
             >
-              {/* Hero Section - Financial Health Score (Enhanced) */}
+              {/* Hero Section - Financial Health Score */}
               <motion.section 
                 className="grid grid-cols-1 lg:grid-cols-3 gap-6"
                 initial={{ opacity: 0, y: 20 }}
@@ -119,14 +116,14 @@ const Index = () => {
                   <FinancialHealthScore score={78} trend="up" changePercent={5.3} />
                 </div>
                 <motion.div 
-                  className="flex items-center justify-center lg:justify-end"
+                  className="flex flex-col justify-center space-y-4"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  <div className="text-center lg:text-right space-y-3">
+                  <div className="text-center lg:text-left">
                     <motion.h1 
-                      className="text-3xl lg:text-4xl font-bold text-gradient-primary font-display"
+                      className="text-2xl lg:text-3xl font-bold text-slate-900 mb-2"
                       initial={{ scale: 0.9 }}
                       animate={{ scale: 1 }}
                       transition={{ duration: 0.6, delay: 0.3 }}
@@ -134,7 +131,7 @@ const Index = () => {
                       Welcome back!
                     </motion.h1>
                     <motion.p 
-                      className="text-slate-600 text-lg"
+                      className="text-slate-600"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 0.4 }}
@@ -142,13 +139,13 @@ const Index = () => {
                       Your financial overview for today
                     </motion.p>
                     <motion.div 
-                      className="flex items-center justify-center lg:justify-end gap-2 text-sm text-slate-500"
+                      className="flex items-center justify-center lg:justify-start gap-2 mt-3 text-sm text-slate-500"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.5 }}
                     >
                       <div 
-                        className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-glow" 
+                        className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" 
                         aria-hidden="true"
                       />
                       <span>All systems operational</span>
@@ -157,7 +154,7 @@ const Index = () => {
                 </motion.div>
               </motion.section>
 
-              {/* Primary CTA - Quick Actions (Enhanced) */}
+              {/* Quick Actions */}
               <section aria-label="Quick Actions">
                 <QuickActions 
                   onUploadClick={uploadModal.open} 
@@ -165,12 +162,12 @@ const Index = () => {
                 />
               </section>
 
-              {/* AI Spotlight - Enhanced with modern design */}
+              {/* AI Spotlight */}
               <section aria-label="AI Insights">
                 <AISpotlight />
               </section>
 
-              {/* Main Chart - Enhanced Cash Flow Trend */}
+              {/* Main Analytics Section */}
               <section 
                 className="grid grid-cols-1 xl:grid-cols-3 gap-6"
                 aria-label="Financial Analytics"
@@ -179,16 +176,13 @@ const Index = () => {
                   <CashFlowTrend />
                 </div>
                 <div className="space-y-6">
-                  {/* Supporting Info - Category Breakdown */}
                   <CategoryBreakdown />
-                  {/* Needs Review Summary */}
                   <NeedsReviewSummary />
                 </div>
               </section>
             </motion.div>
           </main>
 
-          {/* Modals */}
           <UploadModal isOpen={uploadModal.isOpen} onClose={uploadModal.close} />
           <QuickActionModal
             isOpen={quickActionModal.isOpen}
@@ -198,7 +192,6 @@ const Index = () => {
         </ErrorBoundary>
       </MobileGestures>
       
-      {/* Performance and Accessibility Monitoring */}
       <PerformanceMonitor />
       <AccessibilityEnhancer />
       <BrowserCompatibility />
