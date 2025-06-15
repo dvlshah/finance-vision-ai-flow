@@ -11,7 +11,7 @@ import {
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: Upload, label: 'Upload', path: '/upload' },
   { icon: CreditCard, label: 'Transactions', path: '/transactions' },
   { icon: PieChart, label: 'Categories', path: '/categories' },
@@ -23,7 +23,7 @@ export const MobileBottomNav = () => {
   const location = useLocation();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 md:hidden z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border md:hidden z-50 safe-area-pb">
       <nav className="flex items-center justify-around py-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
@@ -32,10 +32,10 @@ export const MobileBottomNav = () => {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center p-2 rounded-lg transition-colors min-w-[60px]",
+                "flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 min-w-[48px] min-h-[48px] touch-manipulation",
                 isActive 
-                  ? "text-blue-600" 
-                  : "text-slate-600"
+                  ? "text-primary bg-primary/10" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
               )}
             >
               <item.icon 
@@ -43,15 +43,15 @@ export const MobileBottomNav = () => {
                 className={cn(
                   "transition-colors mb-1",
                   isActive 
-                    ? "text-blue-600" 
-                    : "text-slate-600"
+                    ? "text-primary" 
+                    : "text-muted-foreground"
                 )} 
               />
               <span className={cn(
-                "text-xs font-medium transition-colors",
+                "text-xs font-medium transition-colors leading-tight",
                 isActive 
-                  ? "text-blue-600" 
-                  : "text-slate-600"
+                  ? "text-primary" 
+                  : "text-muted-foreground"
               )}>
                 {item.label}
               </span>

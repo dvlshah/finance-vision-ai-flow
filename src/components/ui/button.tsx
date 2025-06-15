@@ -6,28 +6,36 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-elevation-1 hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground shadow-elevation-1 hover:bg-destructive/90",
-        outline: "border border-input bg-background shadow-elevation-1 hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground shadow-elevation-1 hover:bg-secondary/80",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm hover:shadow-md",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm hover:shadow-md",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm hover:shadow-md",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline"
+        link: "text-primary underline-offset-4 hover:underline",
+        // NEW: Finance-specific variants
+        gradient: "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300",
+        success: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm hover:shadow-md",
+        warning: "bg-amber-600 text-white hover:bg-amber-700 shadow-sm hover:shadow-md",
+        glass: "bg-white/10 backdrop-blur-sm border border-white/20 text-slate-900 dark:text-white hover:bg-white/20 shadow-sm hover:shadow-md",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-12 rounded-lg px-8 text-base",
-        icon: "h-10 w-10"
-      }
+        default: "h-10 px-4 py-2 min-w-[44px]",
+        sm: "h-9 rounded-md px-3 min-w-[44px]",
+        lg: "h-11 rounded-md px-8 min-w-[44px]",
+        icon: "h-10 w-10 min-w-[44px] min-h-[44px]",
+        // NEW: Mobile-optimized sizes
+        touch: "h-12 px-6 min-w-[48px] min-h-[48px]", // 48px minimum for mobile
+        "touch-sm": "h-10 px-4 min-w-[44px] min-h-[44px]",
+      },
     },
     defaultVariants: {
       variant: "default",
-      size: "default"
-    }
+      size: "default",
+    },
   }
 )
 
@@ -42,7 +50,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size }), className)}
         ref={ref}
         {...props}
       />

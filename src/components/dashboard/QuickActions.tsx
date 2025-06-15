@@ -15,21 +15,21 @@ export const QuickActions = ({ onUploadClick, onQuickAction }: QuickActionsProps
       label: 'Add Transaction',
       description: 'Manual entry',
       onClick: () => onQuickAction('transaction'),
-      variant: 'default' as const
+      variant: 'gradient' as const
     },
     {
       icon: Upload,
       label: 'Upload Documents',
       description: 'Import statements',
       onClick: onUploadClick,
-      variant: 'secondary' as const
+      variant: 'success' as const
     },
     {
       icon: Target,
       label: 'Set Budget',
       description: 'Create goals',
       onClick: () => onQuickAction('budget'),
-      variant: 'outline' as const
+      variant: 'secondary' as const
     },
     {
       icon: Receipt,
@@ -42,15 +42,16 @@ export const QuickActions = ({ onUploadClick, onQuickAction }: QuickActionsProps
 
   return (
     <Card className="shadow-elevation-2">
-      <CardContent className="card-spacing">
+      <CardContent className="p-6">
         <h3 className="font-semibold text-foreground mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-2 lg:grid-cols-4 grid-spacing">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {actions.map((action) => (
             <Button
               key={action.label}
               variant={action.variant}
               onClick={action.onClick}
-              className="h-auto p-4 flex flex-col items-center space-y-2 text-center"
+              size="touch"
+              className="h-auto p-4 flex flex-col items-center space-y-2 text-center min-h-[80px]"
             >
               <action.icon size={20} />
               <div>

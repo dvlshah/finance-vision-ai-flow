@@ -9,10 +9,10 @@ interface HeaderProps {
 
 export const Header = ({ onUploadClick }: HeaderProps) => {
   return (
-    <header className="h-16 bg-white border-b border-border sticky top-0 z-50 px-6 flex items-center justify-between">
-      <div className="flex items-center space-x-6">
+    <header className="h-16 bg-white border-b border-border sticky top-0 z-50 px-4 md:px-6 flex items-center justify-between">
+      <div className="flex items-center space-x-4 md:space-x-6">
         <div className="flex items-center gap-3">
-          <h2 className="text-xl font-semibold text-foreground">
+          <h2 className="text-lg md:text-xl font-semibold text-foreground">
             Dashboard
           </h2>
           <Badge variant="secondary" className="hidden sm:inline-flex items-center gap-1.5 px-2 py-1">
@@ -30,18 +30,18 @@ export const Header = ({ onUploadClick }: HeaderProps) => {
         </div>
       </div>
       
-      <div className="flex items-center space-x-3">
-        <Button onClick={onUploadClick} size="sm">
+      <div className="flex items-center space-x-2 md:space-x-3">
+        <Button onClick={onUploadClick} variant="gradient" size="touch-sm" className="md:size-default">
           <Upload size={16} />
           <span className="hidden sm:inline">Upload</span>
         </Button>
         
-        <Button variant="outline" size="icon" className="relative">
+        <Button variant="outline" size="touch-sm" className="md:size-icon relative">
           <Bell size={18} />
           <div className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full border-2 border-background"></div>
         </Button>
         
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="touch-sm" className="md:size-icon">
           <User size={18} />
         </Button>
       </div>
