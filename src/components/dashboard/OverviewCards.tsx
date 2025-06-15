@@ -1,9 +1,9 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, CreditCard } from 'lucide-react';
 import { ProgressRing } from '@/components/ui/progress-ring';
 import { motion } from 'framer-motion';
 import { containerVariants, itemVariants } from '@/lib/animations';
+import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
 
 const overviewData = [
   {
@@ -45,21 +45,23 @@ const overviewData = [
 ];
 
 export const OverviewCards = () => {
+  const { isLowPerformance } = usePerformanceOptimization();
+
   return (
     <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+      variants={isLowPerformance ? undefined : containerVariants}
+      initial={isLowPerformance ? false : "hidden"}
+      animate={isLowPerformance ? false : "visible"}
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-spacing"
     >
       {overviewData.map((item, index) => (
         <motion.div
           key={item.title}
-          variants={itemVariants}
-          whileHover={{ scale: 1.02, y: -4 }}
-          className="cursor-pointer"
+          variants={isLowPerformance ? undefined : itemVariants}
+          whileHover={isLowPerformance ? undefined : { scale: 1.02, y: -4 }}
+          className="cursor-pointer will-change-transform"
         >
-          <Card className="shadow-elevation-2 interactive-card">
+          <Card className="shadow-elevation-2 interactive-card gpu-accelerated">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {item.title}

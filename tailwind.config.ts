@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -111,6 +110,15 @@ export default {
 				'elevation-3': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
 				'elevation-4': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
 			},
+			// Optimize animation performance
+			transitionProperty: {
+				'height': 'height',
+				'spacing': 'margin, padding',
+			},
+			// Use GPU-accelerated properties
+			transform: {
+				'gpu': 'translate3d(0, 0, 0)',
+			},
 			keyframes: {
 				'accordion-down': {
 					from: {
@@ -161,5 +169,21 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		// Add custom plugin for performance
+		function({ addUtilities }) {
+			addUtilities({
+				'.will-change-auto': {
+					'will-change': 'auto',
+				},
+				'.will-change-transform': {
+					'will-change': 'transform',
+				},
+				'.gpu-accelerated': {
+					'transform': 'translate3d(0, 0, 0)',
+				},
+			})
+		},
+	],
 } satisfies Config;

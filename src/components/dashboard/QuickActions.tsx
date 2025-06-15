@@ -1,9 +1,9 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Plus, Upload, Target, Receipt } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { itemVariants, containerVariants } from '@/lib/animations';
+import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
 
 interface QuickActionsProps {
   onUploadClick: () => void;
@@ -11,6 +11,8 @@ interface QuickActionsProps {
 }
 
 export const QuickActions = ({ onUploadClick, onQuickAction }: QuickActionsProps) => {
+  const { isLowPerformance } = usePerformanceOptimization();
+
   const actions = [
     {
       icon: Plus,
@@ -44,31 +46,32 @@ export const QuickActions = ({ onUploadClick, onQuickAction }: QuickActionsProps
 
   return (
     <motion.div
-      variants={itemVariants}
-      initial="hidden"
-      animate="visible"
+      variants={isLowPerformance ? undefined : itemVariants}
+      initial={isLowPerformance ? false : "hidden"}
+      animate={isLowPerformance ? false : "visible"}
     >
       <Card className="shadow-elevation-2">
         <CardContent className="p-6">
           <h3 className="font-semibold text-foreground mb-4">Quick Actions</h3>
           <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
+            variants={isLowPerformance ? undefined : containerVariants}
+            initial={isLowPerformance ? false : "hidden"}
+            animate={isLowPerformance ? false : "visible"}
             className="grid grid-cols-2 lg:grid-cols-4 gap-4"
           >
             {actions.map((action, index) => (
               <motion.div
                 key={action.label}
-                variants={itemVariants}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                variants={isLowPerformance ? undefined : itemVariants}
+                whileHover={isLowPerformance ? undefined : { scale: 1.05 }}
+                whileTap={isLowPerformance ? undefined : { scale: 0.95 }}
+                className="will-change-transform"
               >
                 <Button
                   variant={action.variant}
                   onClick={action.onClick}
                   size="touch"
-                  className="h-auto p-4 flex flex-col items-center space-y-2 text-center min-h-[80px] w-full"
+                  className="h-auto p-4 flex flex-col items-center space-y-2 text-center min-h-[80px] w-full gpu-accelerated"
                 >
                   <action.icon size={20} />
                   <div>
