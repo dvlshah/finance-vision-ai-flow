@@ -59,43 +59,44 @@ const Index = () => {
             animate="visible"
             className="space-y-8"
           >
-            {/* Hero Section - Financial Health Score (Enlarged) */}
+            {/* Hero Section - Symmetrical 2-column layout */}
             <motion.div
               variants={itemVariants}
-              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
             >
-              <div className="lg:col-span-2">
-                <FinancialHealthScore score={78} trend="up" changePercent={5.3} />
-              </div>
-              <div className="flex items-center">
-                <div className="text-right space-y-2">
+              <FinancialHealthScore score={78} trend="up" changePercent={5.3} />
+              <div className="flex items-center justify-center">
+                <div className="text-center lg:text-right space-y-2">
                   <h1 className="text-3xl font-bold text-slate-900">Welcome back!</h1>
                   <p className="text-slate-600">Your financial overview for today</p>
                 </div>
               </div>
             </motion.div>
 
-            {/* Primary CTA - Quick Actions */}
+            {/* Quick Actions - Full width for symmetry */}
             <QuickActions 
               onUploadClick={uploadModal.open} 
               onQuickAction={handleQuickAction} 
             />
 
-            {/* AI Spotlight - Key Financial Insights */}
+            {/* AI Spotlight - Full width for balance */}
             <AISpotlight />
 
-            {/* Main Chart - Cash Flow Trend */}
+            {/* Main Charts Section - Symmetrical 2-column layout */}
             <motion.div
               variants={itemVariants}
-              className="grid grid-cols-1 xl:grid-cols-3 gap-6"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
             >
-              <div className="xl:col-span-2">
-                <CashFlowTrend />
-              </div>
-              <div className="space-y-6">
-                {/* Supporting Info - Category Breakdown */}
-                <CategoryBreakdown />
-                {/* Needs Review Summary */}
+              <CashFlowTrend />
+              <CategoryBreakdown />
+            </motion.div>
+
+            {/* Bottom Section - Symmetrical single column for balance */}
+            <motion.div
+              variants={itemVariants}
+              className="flex justify-center"
+            >
+              <div className="w-full max-w-md">
                 <NeedsReviewSummary />
               </div>
             </motion.div>
