@@ -21,16 +21,17 @@ export const CategoryBreakdown = () => {
       initial="hidden"
       animate="visible"
     >
-      <Card>
-        <CardHeader>
+      <Card className="h-[460px] flex flex-col">
+        <CardHeader className="flex-shrink-0">
           <CardTitle className="text-lg font-semibold">Spending by Category</CardTitle>
           <p className="text-sm text-slate-500">This month's breakdown</p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-1 flex items-center justify-center">
           <motion.div
             variants={scaleInVariants}
             initial="hidden"
             animate="visible"
+            className="w-full h-full flex items-center justify-center"
           >
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>

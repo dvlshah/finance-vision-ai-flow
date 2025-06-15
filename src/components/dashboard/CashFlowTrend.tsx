@@ -25,8 +25,8 @@ export const CashFlowTrend = () => {
       initial="hidden"
       animate="visible"
     >
-      <Card>
-        <CardHeader className="pb-3">
+      <Card className="h-[460px] flex flex-col">
+        <CardHeader className="pb-3 flex-shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-semibold">Cash Flow Trend</CardTitle>
             <div className="text-right">
@@ -39,13 +39,14 @@ export const CashFlowTrend = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-1 flex items-center">
           <motion.div
             variants={scaleInVariants}
             initial="hidden"
             animate="visible"
+            className="w-full"
           >
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={trendData}>
                 <defs>
                   <linearGradient id="netFlowGradient" x1="0" y1="0" x2="0" y2="1">
