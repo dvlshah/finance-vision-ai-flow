@@ -5,7 +5,6 @@ import { QuickActions } from '@/components/dashboard/QuickActions';
 import { AISpotlight } from '@/components/dashboard/AISpotlight';
 import { CashFlowTrend } from '@/components/dashboard/CashFlowTrend';
 import { CategoryBreakdown } from '@/components/dashboard/CategoryBreakdown';
-import { NeedsReviewSummary } from '@/components/dashboard/NeedsReviewSummary';
 import { WelcomeHero } from '@/components/dashboard/WelcomeHero';
 import { QuickActionModal } from '@/components/modals/QuickActionModal';
 import { UploadModal } from '@/components/modals/UploadModal';
@@ -89,16 +88,6 @@ const Index = () => {
             >
               <CashFlowTrend />
               <CategoryBreakdown />
-            </motion.div>
-
-            {/* Bottom Section - Symmetrical single column for balance */}
-            <motion.div
-              variants={itemVariants}
-              className="flex justify-center"
-            >
-              <div className="w-full max-w-md">
-                <NeedsReviewSummary />
-              </div>
             </motion.div>
           </motion.div>
 
