@@ -44,11 +44,11 @@ const overviewData = [
 
 export const OverviewCards = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-spacing">
       {overviewData.map((item) => (
-        <Card key={item.title} className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+        <Card key={item.title} className="shadow-elevation-2 interactive-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               {item.title}
             </CardTitle>
             <div className="relative">
@@ -63,7 +63,7 @@ export const OverviewCards = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900 mb-1">
+            <div className="text-2xl font-bold text-foreground mb-1">
               {item.value}
             </div>
             <div className="flex items-center space-x-1">
@@ -75,7 +75,7 @@ export const OverviewCards = () => {
               <span className={`text-xs ${item.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
                 {item.change}
               </span>
-              <span className="text-xs text-slate-500">vs last month</span>
+              <span className="text-xs text-muted-foreground">vs last month</span>
             </div>
           </CardContent>
         </Card>
