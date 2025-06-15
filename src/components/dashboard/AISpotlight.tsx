@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Lightbulb, TrendingUp, AlertCircle, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { itemVariants, containerVariants, cardVariants } from '@/lib/animations';
+import { itemVariants, containerVariants } from '@/lib/animations';
 
 interface Insight {
   id: string;
@@ -86,7 +86,7 @@ export const AISpotlight = () => {
               <motion.div
                 key={insight.id}
                 variants={itemVariants}
-                whileHover={cardVariants.hover}
+                whileHover={{ scale: 1.02, y: -4 }}
                 className={`p-4 border rounded-lg cursor-pointer ${getInsightColor(insight.type)}`}
               >
                 <div className="flex items-start justify-between mb-3">

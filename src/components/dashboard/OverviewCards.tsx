@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, CreditCard } from 'lucide-react';
 import { ProgressRing } from '@/components/ui/progress-ring';
 import { motion } from 'framer-motion';
-import { containerVariants, itemVariants, cardVariants } from '@/lib/animations';
+import { containerVariants, itemVariants } from '@/lib/animations';
 
 const overviewData = [
   {
@@ -56,7 +56,7 @@ export const OverviewCards = () => {
         <motion.div
           key={item.title}
           variants={itemVariants}
-          whileHover={cardVariants.hover}
+          whileHover={{ scale: 1.02, y: -4 }}
           className="cursor-pointer"
         >
           <Card className="shadow-elevation-2 interactive-card">
