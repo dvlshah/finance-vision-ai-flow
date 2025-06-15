@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Lightbulb, TrendingUp, AlertCircle, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { itemVariants, containerVariants, cardVariants } from '@/lib/animations';
 
 interface Insight {
   id: string;
@@ -55,49 +57,62 @@ export const AISpotlight = () => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Lightbulb className="h-5 w-5 text-blue-600" />
-            AI Financial Insights
-          </div>
-          <Button variant="ghost" size="sm" className="text-blue-600">
-            View All
-            <ArrowRight className="h-4 w-4 ml-1" />
-          </Button>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {spotlightInsights.map((insight) => (
-            <div 
-              key={insight.id} 
-              className={`p-4 border rounded-lg ${getInsightColor(insight.type)}`}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className={`${getInsightIconColor(insight.type)}`}>
-                    {insight.icon}
-                  </div>
-                  <h4 className="font-medium text-slate-900">{insight.title}</h4>
-                </div>
-                {insight.value && (
-                  <Badge variant="secondary" className="text-xs">
-                    {insight.value}
-                  </Badge>
-                )}
-              </div>
-              <p className="text-sm text-slate-600 mb-3">{insight.description}</p>
-              {insight.action && (
-                <Button variant="outline" size="sm" className="h-7 text-xs">
-                  {insight.action}
-                </Button>
-              )}
+    <motion.div
+      variants={itemVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Lightbulb className="h-5 w-5 text-blue-600" />
+              AI Financial Insights
             </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+            <Button variant="ghost" size="sm" className="text-blue-600">
+              View All
+              <ArrowRight className="h-4 w-4 ml-1" />
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
+            {spotlightInsights.map((insight) => (
+              <motion.div
+                key={insight.id}
+                variants={itemVariants}
+                whileHover={cardVariants.hover}
+                className={`p-4 border rounded-lg cursor-pointer ${getInsightColor(insight.type)}`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`${getInsightIconColor(insight.type)}`}>
+                      {insight.icon}
+                    </div>
+                    <h4 className="font-medium text-slate-900">{insight.title}</h4>
+                  </div>
+                  {insight.value && (
+                    <Badge variant="secondary" className="text-xs">
+                      {insight.value}
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-sm text-slate-600 mb-3">{insight.description}</p>
+                {insight.action && (
+                  <Button variant="outline" size="sm" className="h-7 text-xs">
+                    {insight.action}
+                  </Button>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };

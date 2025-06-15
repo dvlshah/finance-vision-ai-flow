@@ -13,6 +13,8 @@ import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useModalState } from '@/hooks/useModalState';
+import { motion } from 'framer-motion';
+import { containerVariants, itemVariants } from '@/lib/animations';
 
 const Index = () => {
   const { isLoading, hasTransactions } = useDashboardData();
@@ -45,9 +47,17 @@ const Index = () => {
   return (
     <DashboardLayout>
       <ErrorBoundary>
-        <div className="space-y-8">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-8"
+        >
           {/* Hero Section - Financial Health Score (Enlarged) */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <motion.div
+            variants={itemVariants}
+            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+          >
             <div className="lg:col-span-2">
               <FinancialHealthScore score={78} trend="up" changePercent={5.3} />
             </div>
@@ -57,7 +67,7 @@ const Index = () => {
                 <p className="text-slate-600">Your financial overview for today</p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Primary CTA - Quick Actions */}
           <QuickActions 
@@ -69,7 +79,10 @@ const Index = () => {
           <AISpotlight />
 
           {/* Main Chart - Cash Flow Trend */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <motion.div
+            variants={itemVariants}
+            className="grid grid-cols-1 xl:grid-cols-3 gap-6"
+          >
             <div className="xl:col-span-2">
               <CashFlowTrend />
             </div>
@@ -79,8 +92,8 @@ const Index = () => {
               {/* Needs Review Summary */}
               <NeedsReviewSummary />
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Modals */}
         <UploadModal isOpen={uploadModal.isOpen} onClose={uploadModal.close} />

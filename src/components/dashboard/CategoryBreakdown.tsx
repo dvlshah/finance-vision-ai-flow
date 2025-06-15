@@ -2,6 +2,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { CategoryData } from '@/types/financial';
+import { motion } from 'framer-motion';
+import { itemVariants, scaleInVariants } from '@/lib/animations';
 
 const categoryData: CategoryData[] = [
   { name: 'Housing', value: 2100, color: '#3b82f6' },
@@ -14,43 +16,55 @@ const categoryData: CategoryData[] = [
 
 export const CategoryBreakdown = () => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold">Spending by Category</CardTitle>
-        <p className="text-sm text-slate-500">This month's breakdown</p>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={categoryData}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={100}
-              paddingAngle={2}
-              dataKey="value"
-            >
-              {categoryData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip 
-              formatter={(value) => [`$${value}`, 'Amount']}
-              contentStyle={{ 
-                backgroundColor: 'white', 
-                border: '1px solid #e2e8f0',
-                borderRadius: '8px'
-              }}
-            />
-            <Legend 
-              verticalAlign="bottom" 
-              height={36}
-              formatter={(value) => <span className="text-sm text-slate-600">{value}</span>}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
+    <motion.div
+      variants={itemVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">Spending by Category</CardTitle>
+          <p className="text-sm text-slate-500">This month's breakdown</p>
+        </CardHeader>
+        <CardContent>
+          <motion.div
+            variants={scaleInVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={categoryData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {categoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  formatter={(value) => [`$${value}`, 'Amount']}
+                  contentStyle={{ 
+                    backgroundColor: 'white', 
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend 
+                  verticalAlign="bottom" 
+                  height={36}
+                  formatter={(value) => <span className="text-sm text-slate-600">{value}</span>}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </motion.div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
