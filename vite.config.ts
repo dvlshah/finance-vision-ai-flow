@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => ({
         manualChunks: {
           // Separate vendor chunks
           vendor: ['react', 'react-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs', '@radix-ui/react-card'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs'],
           animations: ['framer-motion'],
           charts: ['recharts'],
           router: ['react-router-dom'],
