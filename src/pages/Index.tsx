@@ -1,6 +1,6 @@
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { FinancialHealthScore } from '@/components/dashboard/FinancialHealthScore';
+import { DashboardHero } from '@/components/dashboard/DashboardHero';
 import { QuickActions } from '@/components/dashboard/QuickActions';
 import { AISpotlight } from '@/components/dashboard/AISpotlight';
 import { CashFlowTrend } from '@/components/dashboard/CashFlowTrend';
@@ -58,19 +58,11 @@ const Index = () => {
             animate="visible"
             className="space-y-8"
           >
-            {/* Hero Section - Symmetrical 2-column layout */}
-            <motion.div
-              variants={itemVariants}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-            >
-              <FinancialHealthScore score={78} trend="up" changePercent={5.3} />
-              <div className="flex items-center justify-center">
-                <div className="text-center lg:text-right space-y-2">
-                  <h1 className="text-3xl font-bold text-slate-900">Welcome back!</h1>
-                  <p className="text-slate-600">Your financial overview for today</p>
-                </div>
-              </div>
-            </motion.div>
+            {/* Hero Banner - Unified awesome design */}
+            <DashboardHero 
+              financialHealthScore={78}
+              scoreChange={{ value: 5.3, trend: 'up' }}
+            />
 
             {/* Quick Actions - Full width for symmetry */}
             <QuickActions 
