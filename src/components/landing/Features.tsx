@@ -1,6 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { 
   Brain, 
   PieChart, 
@@ -142,10 +143,16 @@ const Features = () => {
               Join thousands of users who have already taken control of their finances with FinanceVision.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-3 rounded-lg font-medium shadow-lg shadow-blue-600/25 transform hover:scale-105 transition-all duration-200 inline-flex items-center gap-2">
+              <Button 
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-3 rounded-lg font-medium shadow-lg shadow-blue-600/25 transform hover:scale-105 transition-all duration-200 inline-flex items-center gap-2"
+                onClick={() => {
+                  // Trigger auth modal from parent
+                  window.dispatchEvent(new CustomEvent('openAuthModal', { detail: 'signup' }));
+                }}
+              >
                 Start Your Free Trial
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </Button>
               <button className="border border-slate-300 hover:bg-slate-50 text-slate-700 px-8 py-3 rounded-lg font-medium transition-colors">
                 Schedule a Demo
               </button>

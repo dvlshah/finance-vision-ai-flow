@@ -3,9 +3,35 @@ import { Button } from "@/components/ui/button";
 import { Coins, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { AuthModal } from "@/components/auth/AuthModal";
+import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
 
 const LandingHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [authModal, setAuthModal] = useState<{ isOpen: boolean; view: 'signin' | 'signup' }>({
+    isOpen: false,
+    view: 'signin'
+  });
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
+
+  const openAuthModal = (view: 'signin' | 'signup') => {
+    setAuthModal({ isOpen: true, view });
+  };
+
+  const closeAuthModal = () => {
+    setAuthModal({ isOpen: false, view: 'signin' });
+  };
+
+  const handleAuthSuccess = () => {
+    closeAuthModal();
+    setOnboardingOpen(true);
+  };
+
+  const handleOnboardingComplete = () => {
+    setOnboardingOpen(false);
+    // TODO: Redirect to dashboard when Supabase is connected
+    console.log('Onboarding completed');
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/20 bg-white/80 backdrop-blur-lg supports-[backdrop-filter]:bg-white/60">
@@ -37,11 +63,20 @@ const LandingHeader = () => {
 
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="text-slate-600 hover:text-blue-600">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-slate-600 hover:text-blue-600"
+              onClick={() => openAuthModal('signin')}
+            >
               Sign In
             </Button>
-            <Button asChild size="sm" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-600/25">
-              <Link to="/dashboard">Get Started</Link>
+            <Button 
+              size="sm" 
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-600/25"
+              onClick={() => openAuthModal('signup')}
+            >
+              Get Started
             </Button>
           </div>
           
@@ -70,16 +105,39 @@ const LandingHeader = () => {
             </a>
             <hr className="border-slate-200" />
             <div className="flex flex-col gap-2 pt-2">
-              <Button variant="ghost" size="sm" className="justify-start text-slate-600 hover:text-blue-600">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="justify-start text-slate-600 hover:text-blue-600"
+                onClick={() => openAuthModal('signin')}
+              >
                 Sign In
               </Button>
-              <Button asChild size="sm" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
-                <Link to="/dashboard">Get Started</Link>
+              <Button 
+                size="sm" 
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                onClick={() => openAuthModal('signup')}
+              >
+                Get Started
               </Button>
             </div>
           </nav>
         </div>
       )}
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModal.isOpen}
+        onClose={closeAuthModal}
+        initialView={authModal.view}
+      />
+
+      {/* Onboarding Flow */}
+      <OnboardingFlow
+        isOpen={onboardingOpen}
+        onClose={() => setOnboardingOpen(false)}
+        onComplete={handleOnboardingComplete}
+      />
     </header>
   );
 };

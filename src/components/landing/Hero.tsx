@@ -1,10 +1,38 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { ArrowRight, Play, Sparkles, TrendingUp, Shield, Zap } from "lucide-react";
+import { AuthModal } from "@/components/auth/AuthModal";
+import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
 
 const Hero = () => {
+  const [authModal, setAuthModal] = useState<{ isOpen: boolean; view: 'signin' | 'signup' }>({
+    isOpen: false,
+    view: 'signin'
+  });
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
+
+  const openAuthModal = (view: 'signin' | 'signup') => {
+    setAuthModal({ isOpen: true, view });
+  };
+
+  const closeAuthModal = () => {
+    setAuthModal({ isOpen: false, view: 'signin' });
+  };
+
+  const handleAuthSuccess = () => {
+    closeAuthModal();
+    setOnboardingOpen(true);
+  };
+
+  const handleOnboardingComplete = () => {
+    setOnboardingOpen(false);
+    // TODO: Redirect to dashboard when Supabase is connected
+    console.log('Onboarding completed');
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
       {/* Background Elements */}
@@ -40,14 +68,12 @@ const Hero = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button 
-                asChild 
                 size="lg"
-                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg shadow-blue-600/25 transform hover:scale-105 transition-all duration-200"
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg shadow-blue-600/25 transform hover:scale-105 transition-all duration-200 inline-flex items-center gap-2"
+                onClick={() => openAuthModal('signup')}
               >
-                <Link to="/dashboard" className="inline-flex items-center gap-2">
-                  Start Free Trial
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
+                Start Free Trial
+                <ArrowRight className="w-4 h-4" />
               </Button>
               
               <Button 
@@ -107,6 +133,20 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModal.isOpen}
+        onClose={closeAuthModal}
+        initialView={authModal.view}
+      />
+
+      {/* Onboarding Flow */}
+      <OnboardingFlow
+        isOpen={onboardingOpen}
+        onClose={() => setOnboardingOpen(false)}
+        onComplete={handleOnboardingComplete}
+      />
     </section>
   );
 };
